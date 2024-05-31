@@ -1,11 +1,13 @@
 function ProfilePreview() {
   return (
     <div>
-      <div className="flex justify-center items-center w-40 h-40 rounded-full bg-white">
-        <div className="text-center font-bold text-xl">Bujange Bapak</div>
-        <button className="absolute bottom-2 right-2 bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded-full">
-          My Account
-        </button>
+      <div className="bg-white flex items-center justify-between ">
+        <div className="flex items-center">
+          <div>
+            <p className="text-lg font-semibold">Bujange Bapak</p>
+            <p className="text-sm">My Account</p>
+          </div>
+        </div>
       </div>
     </div>
   );
