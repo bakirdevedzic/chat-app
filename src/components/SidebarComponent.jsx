@@ -11,7 +11,7 @@ function SidebarComponent({
   setShowSidebar,
 }) {
   let classNameBase =
-    "h-full bg-white row-span-full col-[1/2] py-[0.75rem] flex flex-col border-solid border-0 border-r border-slate-200  fixed top-0 left-0 z-10 w-[300px] overflow-y-auto transition-[margin-left] ease-in-out duration-500 divide-y";
+    "h-full bg-white row-span-full col-[1/2]  flex flex-col border-solid border-0 border-r border-slate-200  fixed top-0 left-0 z-10 w-[300px] overflow-y-auto transition-[margin-left] ease-in-out duration-500 divide-y";
   let className = "";
   if (sidebarVisible || (sidebarHidden && showSidebar))
     className = classNameBase;
