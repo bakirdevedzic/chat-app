@@ -5,8 +5,8 @@ import Chat from "../components/Chat";
 
 function AppLayout() {
   const [showSidebar, setShowSidebar] = useState(false);
-  const sidebarHidden = useMediaQuery({ maxWidth: 900 });
-  const sidebarVisible = useMediaQuery({ minWidth: 901 });
+  const sidebarHidden = useMediaQuery({ maxWidth: 850 });
+  const sidebarVisible = useMediaQuery({ minWidth: 851 });
 
   return (
     <div className="flex flex-row h-[calc(100dvh)] sm:flex sm:flex-col">
