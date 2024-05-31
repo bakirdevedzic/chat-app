@@ -1,5 +1,7 @@
 import ModalOverlaySideBar from "../ui/ModalOverlaySidebar";
 import Search from "../ui/Search";
+import MessagePreview from "./MessagePreview";
+import ProfilePreview from "./ProfilePreview";
 import TypesOfChats from "./TypesOfChats";
 
 function SidebarComponent({
@@ -18,10 +20,17 @@ function SidebarComponent({
   return (
     <>
       <div className={className}>
-        <div>Osoba </div>
+        <ProfilePreview />
         <Search />
         <TypesOfChats />
-        <div>Chats</div>
+        <MessagePreview />
+        <MessagePreview />
+        <MessagePreview />
+        <MessagePreview />
+        <MessagePreview />
+        <MessagePreview />
+        <MessagePreview />
+        <MessagePreview />
       </div>
 
       {sidebarHidden && showSidebar && (

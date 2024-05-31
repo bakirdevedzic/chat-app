@@ -6,7 +6,7 @@ function TypesOfChats() {
   const tabs = ["All messages", "Groups"];
 
   return (
-    <div className="flex space-x-4 bg-white p-4 text-sm">
+    <div className="flex space-x-4 bg-white p-2 text-sm">
       {tabs.map((tab) => (
         <button
           key={tab}
