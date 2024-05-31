@@ -1,3 +1,5 @@
+import ModalOverlaySideBar from "../ui/ModalOverlaySidebar";
+
 function SidebarComponent({
   showSidebar,
   sidebarHidden,
@@ -11,7 +13,14 @@ function SidebarComponent({
     className = classNameBase;
   if (sidebarHidden && !showSidebar) className = classNameBase + " ml-[-300px]";
 
-  return <div className={className}>smth</div>;
+  return (
+    <>
+      <div className={className}>smth</div>;
+      {sidebarHidden && showSidebar && (
+        <ModalOverlaySideBar setShowSidebar={setShowSidebar} />
+      )}
+    </>
+  );
 }
 
 export default SidebarComponent;
