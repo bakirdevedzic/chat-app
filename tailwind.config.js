@@ -8,7 +8,7 @@ export default {
       },
       colors: {
         "primary-black": "#1D2024",
-        "primary-gray": "#666666",
+        "primary-gray": "#6666",
         "primary-white": "#ebf0f4",
       },
       height: {

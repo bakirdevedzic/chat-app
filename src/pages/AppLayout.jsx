@@ -1,14 +1,15 @@
 import { useState } from "react";
 import SidebarComponent from "../components/SidebarComponent";
 import { useMediaQuery } from "react-responsive";
+import Chat from "../components/Chat";
 
 function AppLayout() {
   const [showSidebar, setShowSidebar] = useState(false);
-  const sidebarHidden = useMediaQuery({ maxWidth: 750 });
-  const sidebarVisible = useMediaQuery({ minWidth: 751 });
+  const sidebarHidden = useMediaQuery({ maxWidth: 900 });
+  const sidebarVisible = useMediaQuery({ minWidth: 901 });
 
   return (
-    <div className="flex flex-row min-h-full h-[calc(100dvh)]">
+    <div className="flex flex-row h-[calc(100dvh)] sm:flex sm:flex-col">
       <SidebarComponent
         showSidebar={showSidebar}
         sidebarHidden={sidebarHidden}
@@ -16,7 +17,9 @@ function AppLayout() {
         setShowSidebar={setShowSidebar}
       />
 
-      <div className="w-[100%] bg-red-300">Chat</div>
+      <div className={`flex-1 ${sidebarVisible ? "ml-[300px]" : ""}`}>
+        <Chat setShowSidebar={setShowSidebar} />
+      </div>
     </div>
   );
 }
