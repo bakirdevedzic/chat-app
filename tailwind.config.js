@@ -8,8 +8,8 @@ export default {
       },
       colors: {
         "primary-black": "#1D2024",
-        "primary-gray": "#6666",
-        "primary-white": "#ebf0f4",
+        "primary-gray": "#ebf0f4",
+        "primary-white": "#f5f6f7",
       },
       height: {
         screen: "100dvh",
