@@ -17,8 +17,8 @@ export default {
       screens: {
         xl: { max: "1380px" },
         md: { min: "901px", max: "1200px" },
-        sm: { max: "900px" },
-        us: { max: "600px" },
+        sm: { max: "850px" },
+        us: { max: "400px" },
       },
     },
   },
