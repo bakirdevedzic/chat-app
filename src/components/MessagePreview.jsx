@@ -1,8 +1,12 @@
-const MessagePreview = ({
-  name = "bakir",
-  message = "hello, are you good my friend??",
-  time = "15:43",
-}) => {
+const MessagePreview = ({ chat }) => {
+  const name = chat.type === "private" ? chat.participants[0] : chat.name;
+  const lastMessage = chat.messages[0];
+  const message = lastMessage.text;
+  const timestamp = lastMessage.timestamp;
+  const time = new Date(
+    timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000
+  ).toLocaleString();
+  console.log(name, message, time);
   return (
     <div className="flex items-start justify-between  p-4 pl-[1.5rem] hover:bg-primary-indigo hover:bg-opacity-20 hover:cursor-pointer">
       <div>

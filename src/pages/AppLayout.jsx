@@ -2,11 +2,15 @@ import { useState } from "react";
 import SidebarComponent from "../components/SidebarComponent";
 import { useMediaQuery } from "react-responsive";
 import Chat from "../components/Chat";
+import useFetchChats from "../hooks/useFetchChats";
 
 function AppLayout() {
   const [showSidebar, setShowSidebar] = useState(false);
   const sidebarHidden = useMediaQuery({ maxWidth: 850 });
   const sidebarVisible = useMediaQuery({ minWidth: 851 });
+  const { status, error, chats } = useFetchChats("4QXIEU92mtzeoxE3x9f0");
+
+  if (status === "loading") return <div>Loading...</div>;
 
   return (
     <div className="flex flex-row h-[calc(100dvh)] sm:flex sm:flex-col">
