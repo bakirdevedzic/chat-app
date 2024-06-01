@@ -7,9 +7,9 @@ function NewMessageBox() {
         <input
           type="text"
           placeholder="Send message"
-          className="border-2 outline-none bg-gray-200 rounded-lg w-full h-14 py-3 px-4 mr-2 focus:ring-[2px] focus:ring-primary-indigo"
+          className="border-2 outline-none bg-gray-200 rounded-lg w-full h-14 py-3 px-4 mr-2 focus:ring-[1px] focus:ring-primary-indigo"
         />
-        <div className="text-3xl flex justify-center items-center text-white w-12 h-12 bg-indigo-700 rounded-full">
+        <div className="text-3xl flex justify-center items-center text-white w-12 h-12 bg-indigo-700 rounded-full hover:cursor-pointer">
           <IoIosSend />
         </div>
       </div>

@@ -4,7 +4,7 @@ function Search() {
       <div>
         <input
           type="text"
-          placeholder="Search people..."
+          placeholder="Search chats..."
           className="ml-2 outline-none bg-transparent text-gray-700"
         />
       </div>
