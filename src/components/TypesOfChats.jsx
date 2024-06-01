@@ -12,7 +12,7 @@ function TypesOfChats() {
           key={tab}
           onClick={() => setActiveTab(tab)}
           className={`px-4 py-2 rounded-full ${
-            activeTab === tab ? "bg-blue-500 text-white" : "text-gray-500"
+            activeTab === tab ? "bg-primary-indigo text-white" : "text-gray-500"
           }`}
         >
           {tab}

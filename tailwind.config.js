@@ -10,6 +10,7 @@ export default {
         "primary-black": "#1D2024",
         "primary-gray": "#ebf0f4",
         "primary-white": "#f5f6f7",
+        "primary-indigo": "#4338ca",
       },
       height: {
         screen: "100dvh",
