@@ -9,7 +9,7 @@ const MessagePreview = ({
         <div className="font-bold text-gray-900">{name}</div>
         <div className="text-gray-700">{message}</div>
       </div>
-      <div className="text-sm text-blue-500">{time}</div>
+      <div className="text-sm text-primary-indigo">{time}</div>
     </div>
   );
 };
