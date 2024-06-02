@@ -1,18 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoIosSend } from "react-icons/io";
 
 function NewMessageBox({ triggerSendMessage }) {
   const [message, setMessage] = useState("");
+  const [isSendingDisabled, setIsSendingDisabled] = useState(false);
+
+  useEffect(() => {
+    if (isSendingDisabled) {
+      const timer = setTimeout(() => {
+        setIsSendingDisabled(false);
+      }, 5000);
+
+      return () => clearTimeout(timer); // Clean up the timer on component unmount
+    }
+  }, [isSendingDisabled]);
 
   const handleSendMessage = (event) => {
-    if (event.type === "keydown" && event.key === "Enter" && message.trim()) {
-      // Send message on Enter key press
-      triggerSendMessage(message.trim());
-      setMessage("");
-    } else if (event.type === "click" && message.trim()) {
-      // Send message on icon click
-      triggerSendMessage(message.trim());
-      setMessage("");
+    if (
+      (event.type === "keydown" && event.key === "Enter" && message.trim()) ||
+      (event.type === "click" && message.trim())
+    ) {
+      if (!isSendingDisabled) {
+        triggerSendMessage(message.trim());
+        setMessage("");
+        setIsSendingDisabled(true);
+      }
     }
   };
 
@@ -22,7 +34,7 @@ function NewMessageBox({ triggerSendMessage }) {
 
   return (
     <div className="h-full bg-white flex items-center justify-center border-t">
-      <div className="flex items-center w-[90%]  bg-white rounded-lg px-4 py-2 ">
+      <div className="flex items-center w-[90%] bg-white rounded-lg px-4 py-2">
         <input
           type="text"
           placeholder="Send message"
@@ -30,10 +42,14 @@ function NewMessageBox({ triggerSendMessage }) {
           onChange={handleChange}
           onKeyDown={handleSendMessage}
           className="border-2 outline-none bg-gray-200 rounded-lg w-full h-14 py-3 px-4 mr-2 focus:ring-[1px] focus:ring-primary-indigo"
+          disabled={isSendingDisabled}
         />
         <div
-          className="text-3xl flex justify-center items-center text-white w-12 h-12 bg-indigo-700 rounded-full hover:cursor-pointer"
-          onClick={handleSendMessage} // Maintain click handler
+          className={`text-3xl flex justify-center items-center text-white w-12 h-12 ${
+            isSendingDisabled ? "bg-gray-400" : "bg-indigo-700"
+          } rounded-full hover:cursor-pointer`}
+          onClick={handleSendMessage}
+          style={{ pointerEvents: isSendingDisabled ? "none" : "auto" }}
         >
           <IoIosSend />
         </div>
