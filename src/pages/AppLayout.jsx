@@ -8,9 +8,18 @@ function AppLayout() {
   const [showSidebar, setShowSidebar] = useState(false);
   const sidebarHidden = useMediaQuery({ maxWidth: 850 });
   const sidebarVisible = useMediaQuery({ minWidth: 851 });
-  const { status, error, chats } = useFetchChats("4QXIEU92mtzeoxE3x9f0");
 
-  if (status === "loading") return <div>Loading...</div>;
+  const handleNewMessage = (chatId, newMessage) => {
+    console.log(`New message in chat ${chatId}:`, newMessage);
+    // Update your state or UI here
+  };
+
+  const { isLoading, chats } = useFetchChats(
+    "4QXIEU92mtzeoxE3x9f0",
+    handleNewMessage
+  );
+  console.log(isLoading, chats);
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className="flex flex-row h-[calc(100dvh)] sm:flex sm:flex-col">
@@ -19,10 +28,11 @@ function AppLayout() {
         sidebarHidden={sidebarHidden}
         sidebarVisible={sidebarVisible}
         setShowSidebar={setShowSidebar}
+        chats={chats}
       />
 
       <div className={`flex-1 ${sidebarVisible ? "ml-[300px]" : ""}`}>
-        <Chat setShowSidebar={setShowSidebar} />
+        <Chat setShowSidebar={setShowSidebar} chats={chats} />
       </div>
     </div>
   );

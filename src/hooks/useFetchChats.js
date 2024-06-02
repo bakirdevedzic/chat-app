@@ -1,20 +1,32 @@
-import { useQuery } from "@tanstack/react-query";
 import { fetchUserChats } from "../services/firebase";
+import { useEffect, useState } from "react";
 
-const useFetchChats = (userId) => {
-  const queryResult = useQuery(
-    ["chats", userId],
-    () => fetchUserChats(userId),
-    {
-      enabled: !!userId,
+const useFetchChats = (userId, handleNewMessage) => {
+  const [chats, setChats] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchChats = async () => {
+      try {
+        setIsLoading(true);
+        const fetchedChats = await fetchUserChats(userId, handleNewMessage);
+        setChats(fetchedChats);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching user chats:", error);
+        setError(error);
+        setIsLoading(false);
+      }
+      setIsLoading(false);
+    };
+
+    if (userId) {
+      fetchChats();
     }
-  );
+  }, []);
 
-  return {
-    status: queryResult.status,
-    error: queryResult.error,
-    chats: queryResult.data,
-  };
+  return { isLoading, chats, error };
 };
 
 export default useFetchChats;

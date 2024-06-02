@@ -7,6 +7,7 @@ import {
   limit,
   getDoc,
   doc,
+  onSnapshot,
 } from "firebase/firestore";
 import { getUsers } from "../utils/helpers";
 
@@ -31,40 +32,15 @@ export const fetchUserData = async (userId) => {
   return userData;
 };
 
-export const fetchUserChats = async (userId) => {
+export const fetchUserChats = async (userId, onNewMessage) => {
   try {
     const userData = await fetchUserData(userId);
 
     const privateChatIds = userData?.privateChats || [];
     const groupChatIds = userData?.groupChats || [];
 
-    // const privateChats = await Promise.all([
-    //   ...privateChatIds.map(async (chatId) => {
-    //     const chatDocRef = doc(collection(db, "privateChats"), chatId);
-    //     const chatSnapshot = await getDoc(chatDocRef);
-    //     const chatData = chatSnapshot.exists ? chatSnapshot.data() : null;
-
-    //     if (!chatData) {
-    //       console.warn(`Private chat not found: ${chatId}`); // Handle missing chat
-    //       return null; // Skip missing chat
-    //     }
-
-    //     const messagesRef = query(
-    //       collection(chatDocRef, "messages"),
-    //       orderBy("timestamp", "desc"),
-    //       limit(50)
-    //     );
-    //     const messagesSnapshot = await getDocs(messagesRef);
-    //     const messages = messagesSnapshot.docs.map((doc) => ({
-    //       id: doc.id,
-    //       ...doc.data(),
-    //     }));
-
-    //     return { id: chatDocRef.id, type: "private", ...chatData, messages };
-    //   }),
-    // ]);
-    const privateChats = await Promise.all([
-      ...privateChatIds.map(async (chatId) => {
+    const privateChats = await Promise.all(
+      privateChatIds.map(async (chatId) => {
         const chatDocRef = doc(collection(db, "privateChats"), chatId);
         const chatSnapshot = await getDoc(chatDocRef);
         const chatData = chatSnapshot.exists ? chatSnapshot.data() : null;
@@ -90,21 +66,21 @@ export const fetchUserChats = async (userId) => {
           id: chatDocRef.id,
           type: "private",
           ...chatData,
-          participants: participantNames, // Add participant names
+          participants: participantNames,
           messages,
         };
-      }),
-    ]);
+      })
+    );
 
-    const groupChats = await Promise.all([
-      ...groupChatIds.map(async (chatId) => {
+    const groupChats = await Promise.all(
+      groupChatIds.map(async (chatId) => {
         const chatDocRef = doc(collection(db, "groupChats"), chatId);
         const chatSnapshot = await getDoc(chatDocRef);
         const chatData = chatSnapshot.exists ? chatSnapshot.data() : null;
 
         if (!chatData) {
-          console.warn(`Group chat not found: ${chatId}`); // Handle missing chat
-          return null; // Skip missing chat
+          console.warn(`Group chat not found: ${chatId}`);
+          return null;
         }
 
         const messagesRef = query(
@@ -118,72 +94,46 @@ export const fetchUserChats = async (userId) => {
           ...doc.data(),
         }));
 
-        return { id: chatDocRef.id, type: "group", ...chatData, messages };
-      }),
-    ]);
+        return {
+          id: chatDocRef.id,
+          type: "group",
+          ...chatData,
+          messages,
+        };
+      })
+    );
 
-    const chats = [...privateChats, ...groupChats];
+    const chats = [...privateChats, ...groupChats].filter(Boolean);
 
-    // const chats = await Promise.all([
-    //   ...Promise.all([
-    //     ...privateChatIds.map(async (chatId) => {
-    //       const chatDocRef = doc(collection(db, "privateChats"), chatId);
-    //       const chatSnapshot = await getDoc(chatDocRef);
-    //       const chatData = chatSnapshot.exists ? chatSnapshot.data() : null;
+    addMessageListeners(chats, onNewMessage);
 
-    //       if (!chatData) {
-    //         console.warn(`Private chat not found: ${chatId}`); // Handle missing chat
-    //         return null; // Skip missing chat
-    //       }
-
-    //       const messagesRef = query(
-    //         collection(chatDocRef, "messages"),
-    //         orderBy("timestamp", "desc"),
-    //         limit(50)
-    //       );
-    //       const messagesSnapshot = await getDocs(messagesRef);
-    //       const messages = messagesSnapshot.docs.map((doc) => ({
-    //         id: doc.id,
-    //         ...doc.data(),
-    //       }));
-
-    //       return { id: chatDocRef.id, type: "private", ...chatData, messages };
-    //     }),
-    //   ]),
-    //   ...Promise.all([
-    //     ...groupChatIds.map(async (chatId) => {
-    //       const chatDocRef = doc(collection(db, "groupChats"), chatId);
-    //       const chatSnapshot = await getDoc(chatDocRef);
-    //       const chatData = chatSnapshot.exists ? chatSnapshot.data() : null;
-
-    //       if (!chatData) {
-    //         console.warn(`Group chat not found: ${chatId}`); // Handle missing chat
-    //         return null; // Skip missing chat
-    //       }
-
-    //       const messagesRef = query(
-    //         collection(chatDocRef, "messages"),
-    //         orderBy("timestamp", "desc"),
-    //         limit(50)
-    //       );
-    //       const messagesSnapshot = await getDocs(messagesRef);
-    //       const messages = messagesSnapshot.docs.map((doc) => ({
-    //         id: doc.id,
-    //         ...doc.data(),
-    //       }));
-
-    //       return { id: chatDocRef.id, type: "group", ...chatData, messages };
-    //     }),
-    //   ]),
-    // ]);
-
-    // Filter out skipped chats due to errors
-    const filteredChats = chats.filter(Boolean);
-
-    return filteredChats;
+    return chats;
   } catch (error) {
     console.error("Error fetching user chats:", error);
-    // Handle error appropriately (e.g., display an error message)
-    return []; // Return an empty array in case of error
+    return [];
   }
+};
+
+export const addMessageListeners = (chats, onNewMessage) => {
+  chats.forEach((chat) => {
+    const messagesRef = query(
+      collection(
+        db,
+        chat.type === "private" ? "privateChats" : "groupChats",
+        chat.id,
+        "messages"
+      ),
+      orderBy("timestamp", "desc"),
+      limit(50)
+    );
+
+    onSnapshot(messagesRef, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          const newMessage = { id: change.doc.id, ...change.doc.data() };
+          onNewMessage(chat.id, newMessage);
+        }
+      });
+    });
+  });
 };
