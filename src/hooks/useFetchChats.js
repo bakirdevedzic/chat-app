@@ -16,7 +16,6 @@ const useFetchChats = (userId, handleNewMessage) => {
       } catch (error) {
         console.error("Error fetching user chats:", error);
         setError(error);
-        setIsLoading(false);
       }
       setIsLoading(false);
     };
@@ -24,7 +23,7 @@ const useFetchChats = (userId, handleNewMessage) => {
     if (userId) {
       fetchChats();
     }
-  }, []);
+  }, [userId]);
 
   return { isLoading, chats, error };
 };
