@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SidebarComponent from "../components/SidebarComponent";
 import { useMediaQuery } from "react-responsive";
 import Chat from "../components/Chat";
 import useFetchChats from "../hooks/useFetchChats";
+import useSendMessage from "../hooks/useSendMessage";
 
 function AppLayout() {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -13,6 +14,11 @@ function AppLayout() {
     console.log(`New message in chat ${chatId}:`, newMessage);
     // Update your state or UI here
   };
+
+  const { triggerSendMessage, isSending, error } = useSendMessage(
+    "FCYC1IgbhQxtR0MjZ5RQ",
+    "group"
+  );
 
   const { isLoading, chats } = useFetchChats(
     "4QXIEU92mtzeoxE3x9f0",
@@ -32,7 +38,11 @@ function AppLayout() {
       />
 
       <div className={`flex-1 ${sidebarVisible ? "ml-[300px]" : ""}`}>
-        <Chat setShowSidebar={setShowSidebar} chats={chats} />
+        <Chat
+          setShowSidebar={setShowSidebar}
+          chats={chats}
+          triggerSendMessage={triggerSendMessage}
+        />
       </div>
     </div>
   );

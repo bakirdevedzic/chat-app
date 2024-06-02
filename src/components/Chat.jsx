@@ -4,7 +4,7 @@ import ChatName from "./ChatName";
 import Messages from "./Messages";
 import NewMessageBox from "./NewMessageBox";
 
-function Chat({ setShowSidebar, chats }) {
+function Chat({ setShowSidebar, chats, triggerSendMessage }) {
   const { id } = useParams();
 
   const chat = chats.find((chat) => chat.id === id);
@@ -14,7 +14,7 @@ function Chat({ setShowSidebar, chats }) {
     <div className="grid grid-rows-[auto_1fr_90px] w-[100%] h-full">
       <ChatName name={name} />
       <Messages chat={chat} />
-      <NewMessageBox />
+      <NewMessageBox triggerSendMessage={triggerSendMessage} />
     </div>
   );
 }

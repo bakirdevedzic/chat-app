@@ -8,6 +8,8 @@ import {
   getDoc,
   doc,
   onSnapshot,
+  serverTimestamp,
+  setDoc,
 } from "firebase/firestore";
 import { getUsers } from "../utils/helpers";
 
@@ -136,4 +138,27 @@ export const addMessageListeners = (chats, onNewMessage) => {
       });
     });
   });
+};
+
+export const sendMessage = async (chatId, chatType, message) => {
+  try {
+    const chatDocRef = doc(
+      collection(db, chatType === "private" ? "privateChats" : "groupChats"),
+      chatId
+    );
+    const messagesCollectionRef = collection(chatDocRef, "messages");
+
+    const newMessageRef = doc(messagesCollectionRef);
+    const newMessage = {
+      text: message,
+      sender: "4QXIEU92mtzeoxE3x9f0",
+      timestamp: serverTimestamp(),
+    };
+
+    await setDoc(newMessageRef, newMessage);
+
+    console.log("Message sent successfully");
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
 };
