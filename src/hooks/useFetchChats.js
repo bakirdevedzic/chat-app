@@ -1,8 +1,7 @@
 import { fetchUserChats } from "../services/firebase";
 import { useEffect, useState } from "react";
 
-const useFetchChats = (userId, handleNewMessage) => {
-  const [chats, setChats] = useState([]);
+const useFetchChats = (userId, handleNewMessage, setChats) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -10,7 +9,11 @@ const useFetchChats = (userId, handleNewMessage) => {
     const fetchChats = async () => {
       try {
         setIsLoading(true);
-        const fetchedChats = await fetchUserChats(userId, handleNewMessage);
+        const fetchedChats = await fetchUserChats(
+          userId,
+          handleNewMessage,
+          setChats
+        );
         setChats(fetchedChats);
         setIsLoading(false);
       } catch (error) {
@@ -25,7 +28,7 @@ const useFetchChats = (userId, handleNewMessage) => {
     }
   }, [userId]);
 
-  return { isLoading, chats, error };
+  return { isLoading, error };
 };
 
 export default useFetchChats;

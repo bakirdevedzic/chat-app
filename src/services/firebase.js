@@ -7,9 +7,10 @@ import {
   limit,
   getDoc,
   doc,
-  onSnapshot,
   serverTimestamp,
   setDoc,
+  onSnapshot,
+  where,
 } from "firebase/firestore";
 import { getUsers } from "../utils/helpers";
 
@@ -34,7 +35,7 @@ export const fetchUserData = async (userId) => {
   return userData;
 };
 
-export const fetchUserChats = async (userId, onNewMessage) => {
+export const fetchUserChats = async (userId, onNewMessage, setChats) => {
   try {
     const userData = await fetchUserData(userId);
 
@@ -45,7 +46,7 @@ export const fetchUserChats = async (userId, onNewMessage) => {
       privateChatIds.map(async (chatId) => {
         const chatDocRef = doc(collection(db, "privateChats"), chatId);
         const chatSnapshot = await getDoc(chatDocRef);
-        const chatData = chatSnapshot.exists ? chatSnapshot.data() : null;
+        const chatData = chatSnapshot.exists() ? chatSnapshot.data() : null;
 
         if (!chatData) {
           console.warn(`Private chat not found: ${chatId}`);
@@ -64,12 +65,16 @@ export const fetchUserChats = async (userId, onNewMessage) => {
           ...doc.data(),
         }));
 
+        const latestMessageTimestamp =
+          messages.length > 0 ? messages[0].timestamp : null;
+
         return {
           id: chatDocRef.id,
           type: "private",
           ...chatData,
           participants: participantNames,
           messages,
+          latestMessageTimestamp,
         };
       })
     );
@@ -78,12 +83,14 @@ export const fetchUserChats = async (userId, onNewMessage) => {
       groupChatIds.map(async (chatId) => {
         const chatDocRef = doc(collection(db, "groupChats"), chatId);
         const chatSnapshot = await getDoc(chatDocRef);
-        const chatData = chatSnapshot.exists ? chatSnapshot.data() : null;
+        const chatData = chatSnapshot.exists() ? chatSnapshot.data() : null;
 
         if (!chatData) {
           console.warn(`Group chat not found: ${chatId}`);
           return null;
         }
+
+        const participantNames = await getUsers({ chatData, userId });
 
         const messagesRef = query(
           collection(chatDocRef, "messages"),
@@ -96,18 +103,23 @@ export const fetchUserChats = async (userId, onNewMessage) => {
           ...doc.data(),
         }));
 
+        const latestMessageTimestamp =
+          messages.length > 0 ? messages[0].timestamp : null;
+
         return {
           id: chatDocRef.id,
           type: "group",
           ...chatData,
           messages,
+          participants: participantNames,
+          latestMessageTimestamp,
         };
       })
     );
 
     const chats = [...privateChats, ...groupChats].filter(Boolean);
 
-    addMessageListeners(chats, onNewMessage);
+    addMessageListeners(chats, onNewMessage, setChats);
 
     return chats;
   } catch (error) {
@@ -116,8 +128,10 @@ export const fetchUserChats = async (userId, onNewMessage) => {
   }
 };
 
-export const addMessageListeners = (chats, onNewMessage) => {
+export const addMessageListeners = (chats, onNewMessage, setChats) => {
   chats.forEach((chat) => {
+    if (!chat.latestMessageTimestamp) return;
+
     const messagesRef = query(
       collection(
         db,
@@ -125,8 +139,8 @@ export const addMessageListeners = (chats, onNewMessage) => {
         chat.id,
         "messages"
       ),
-      orderBy("timestamp", "desc"),
-      limit(50)
+      where("timestamp", ">", chat.latestMessageTimestamp),
+      orderBy("timestamp", "desc")
     );
 
     onSnapshot(messagesRef, (snapshot) => {
