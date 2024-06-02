@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SidebarComponent from "../components/SidebarComponent";
 import { useMediaQuery } from "react-responsive";
 import Chat from "../components/Chat";
@@ -10,21 +10,48 @@ function AppLayout() {
   const sidebarHidden = useMediaQuery({ maxWidth: 850 });
   const sidebarVisible = useMediaQuery({ minWidth: 851 });
 
+  const [chats, setChats] = useState([]);
+
   const handleNewMessage = (chatId, newMessage) => {
-    console.log(`New message in chat ${chatId}:`, newMessage);
-    // Update your state or UI here
+    setChats((prevChats) => {
+      const chatIndex = prevChats.findIndex((chat) => chat.id === chatId);
+      if (chatIndex !== -1) {
+        const chat = prevChats[chatIndex];
+
+        const messageExists = chat.messages.some(
+          (message) => message.id === newMessage.id
+        );
+        if (!messageExists) {
+          const updatedChat = {
+            ...chat,
+            messages: [newMessage, ...chat.messages],
+          };
+
+          const updatedChats = [
+            ...prevChats.slice(0, chatIndex),
+            updatedChat,
+            ...prevChats.slice(chatIndex + 1),
+          ];
+
+          return updatedChats;
+        }
+      }
+      return prevChats;
+    });
   };
+  console.log(chats);
 
   const { triggerSendMessage, isSending, error } = useSendMessage(
     "FCYC1IgbhQxtR0MjZ5RQ",
     "group"
   );
 
-  const { isLoading, chats } = useFetchChats(
+  const { isLoading } = useFetchChats(
     "4QXIEU92mtzeoxE3x9f0",
-    handleNewMessage
+    handleNewMessage,
+    setChats
   );
-  console.log(isLoading, chats);
+
   if (isLoading) return <div>Loading...</div>;
 
   return (

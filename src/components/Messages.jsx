@@ -1,10 +1,13 @@
-import { useParams } from "react-router-dom";
+import { transformMessages } from "../utils/helpers";
 import Message from "./Message";
 
 function Messages({ chat }) {
+  const transformedMessages = transformMessages(chat);
+  console.log(transformedMessages);
+
   return (
     <div className="flex flex-col-reverse bg-slate-50 overflow-y-scroll">
-      {chat.messages?.map((message) => (
+      {transformedMessages?.map((message) => (
         <Message key={message.id} message={message} />
       ))}
     </div>
