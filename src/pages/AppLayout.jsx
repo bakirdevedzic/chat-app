@@ -62,7 +62,7 @@ function AppLayout() {
 
   console.log("chats", chats);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading && isLoading2 && isLoading3) return <div>Loading...</div>;
 
   return (
     <ChatContext.Provider

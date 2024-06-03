@@ -18,16 +18,19 @@ function Messages({ chat, setLoadChat }) {
   console.log(chat.messages, " ", chat.fetchedMessageAmount);
 
   return (
-    <div className="flex flex-col overflow-y-scroll">
-      {chat.messageCount > chat.fetchedMessageAmount && (
-        <button className="self-start" onClick={loadMoreMessages}>
-          Load more
-        </button>
-      )}
-      <div className="flex flex-col-reverse bg-slate-50 overflow-y-scroll items-start flex-grow">
-        {transformedMessages?.map((message) => (
-          <Message key={message.id} message={message} />
-        ))}
+    <div className="flex flex-col-reverse bg-slate-50 overflow-y-scroll items-start flex-grow">
+      {transformedMessages?.map((message) => (
+        <Message key={message.id} message={message} />
+      ))}
+      <div className="flex justify-center w-[100%]">
+        {chat.messageCount > chat.fetchedMessageAmount && (
+          <button
+            className="self-start p-2 text-center shadow-lg mb-6 mt-6 bg-white rounded-xl hover:bg-primary-indigo hover:text-white"
+            onClick={loadMoreMessages}
+          >
+            Load more
+          </button>
+        )}
       </div>
     </div>
   );

@@ -16,11 +16,17 @@ function Chat() {
 
   const isUserInChat = isUserInGroup(id, chats);
 
-  const chat = chats?.find((chat) => chat.id === id);
+  const chat = chats?.find((chat) => chat.id === id)
+    ? chats?.find((chat) => chat.id === id)
+    : { type: "group" };
+
+  const lastMessageTimestamp = chat?.messages?.length
+    ? chat.messages[chat.messages.length - 1].timestamp
+    : null;
   const { loading } = useLoadMoreMessages(
     id,
     chat.type,
-    chat.messages[chat.messages.length - 1].timestamp,
+    lastMessageTimestamp,
     setChats,
     setLoadChat,
     loadChat,
@@ -28,8 +34,6 @@ function Chat() {
   );
 
   const { triggerSendMessage } = useSendMessage(id, chat?.type);
-  const name =
-    chat?.type === "private" ? chat.participants[0].username : chat?.name;
   if (!isUserInChat)
     return (
       <div className="h-full flex justify-center items-center align-middle text-2xl font-bold text-gray-600 text-center">
