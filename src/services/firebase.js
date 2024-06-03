@@ -14,6 +14,7 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
+  getCountFromServer,
 } from "firebase/firestore";
 import { getUsers } from "../utils/helpers";
 
@@ -31,6 +32,7 @@ export const fetchExploreGroups = async (userId) => {
 
     const groupChatsRef = collection(db, "groupChats");
     const groupChatsSnapshot = await getDocs(groupChatsRef);
+
     const allGroupChats = groupChatsSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -73,6 +75,7 @@ export const fetchUserChats = async (userId, onNewMessage) => {
           limit(50)
         );
         const messagesSnapshot = await getDocs(messagesRef);
+
         const messages = messagesSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -80,9 +83,10 @@ export const fetchUserChats = async (userId, onNewMessage) => {
 
         const latestMessageTimestamp =
           messages.length > 0 ? messages[0].timestamp : null;
-
+        const messageCount = await getMessageCount(chatId, "private");
         return {
           id: chatDocRef.id,
+          messageCount: messageCount,
           type: "private",
           ...chatData,
           newMessage: false,
@@ -119,9 +123,10 @@ export const fetchUserChats = async (userId, onNewMessage) => {
 
         const latestMessageTimestamp =
           messages.length > 0 ? messages[0].timestamp : null;
-
+        const messageCount = await getMessageCount(chatId, "group");
         return {
           id: chatDocRef.id,
+          messageCount: messageCount,
           type: "group",
           newMessage: false,
           ...chatData,
@@ -223,8 +228,10 @@ export const fetchChatMessages = async (chatId, chatType, userId) => {
       messages.length > 0 ? messages[0].timestamp : null;
 
     const participantNames = await getUsers({ chatData, userId });
+    const messageCount = await getMessageCount(chatId, "group");
     return {
       id: chatDocRef.id,
+      messageCount: messageCount,
       type: chatType,
       ...chatData,
       participants: participantNames,
@@ -323,5 +330,18 @@ export const removeUserFromGroupChat = async (userId, chatId) => {
   } catch (error) {
     console.error("Error removing user from group chat:", error);
     throw new Error("Failed to remove user from group chat");
+  }
+};
+
+const getMessageCount = async (chatId, chatType) => {
+  try {
+    const chatCollection = chatType === "group" ? "groupChats" : "privateChats";
+    const messagesRef = collection(db, chatCollection, chatId, "messages");
+
+    const snapshot = await getCountFromServer(messagesRef);
+    return snapshot.data().count;
+  } catch (error) {
+    console.error("Error getting message count:", error);
+    throw new Error("Failed to get message count");
   }
 };
