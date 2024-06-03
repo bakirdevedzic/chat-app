@@ -13,6 +13,7 @@ import {
   where,
   updateDoc,
   arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 import { getUsers } from "../utils/helpers";
 
@@ -191,7 +192,7 @@ export const sendMessage = async (chatId, chatType, message) => {
   }
 };
 
-export const fetchChatMessages = async (chatId, chatType) => {
+export const fetchChatMessages = async (chatId, chatType, userId) => {
   try {
     // Determine the collection based on chat type
     const chatCollection = chatType === "group" ? "groupChats" : "privateChats";
@@ -221,10 +222,12 @@ export const fetchChatMessages = async (chatId, chatType) => {
     const latestMessageTimestamp =
       messages.length > 0 ? messages[0].timestamp : null;
 
+    const participantNames = await getUsers({ chatData, userId });
     return {
       id: chatDocRef.id,
       type: chatType,
       ...chatData,
+      participants: participantNames,
       messages,
       latestMessageTimestamp,
     };
@@ -234,17 +237,64 @@ export const fetchChatMessages = async (chatId, chatType) => {
   }
 };
 
+export const addSingleChatMessageListener = (chat, onNewMessage) => {
+  if (!chat.latestMessageTimestamp) return;
+
+  const messagesRef = query(
+    collection(
+      db,
+      chat.type === "private" ? "privateChats" : "groupChats",
+      chat.id,
+      "messages"
+    ),
+    where("timestamp", ">", chat.latestMessageTimestamp),
+    orderBy("timestamp", "desc")
+  );
+
+  onSnapshot(messagesRef, (snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      if (change.type === "added") {
+        const newMessage = { id: change.doc.id, ...change.doc.data() };
+        onNewMessage(chat.id, newMessage);
+      }
+    });
+  });
+};
+
+export const fetchChatAndAddListener = async (
+  chatId,
+  chatType,
+  onNewMessage,
+  userId
+) => {
+  try {
+    // Fetch chat messages
+    const chat = await fetchChatMessages(chatId, chatType, userId);
+
+    if (!chat) {
+      console.warn(`Chat not found or failed to fetch: ${chatId}`);
+      return null;
+    }
+
+    // Add message listener
+    addSingleChatMessageListener(chat, onNewMessage);
+
+    return chat;
+  } catch (error) {
+    console.error("Error fetching chat and adding listener:", error);
+    return null;
+  }
+};
+
 export const addUserToGroupChat = async (userId, chatId) => {
   const userDocRef = doc(db, "users", userId);
   const chatDocRef = doc(db, "groupChats", chatId);
 
   try {
-    // Update the group's users array
     await updateDoc(chatDocRef, {
       users: arrayUnion(userId),
     });
 
-    // Update the user's groupChats array
     await updateDoc(userDocRef, {
       groupChats: arrayUnion(chatId),
     });
@@ -253,5 +303,25 @@ export const addUserToGroupChat = async (userId, chatId) => {
   } catch (error) {
     console.error("Error adding user to group chat:", error);
     throw new Error("Failed to add user to group chat");
+  }
+};
+
+export const removeUserFromGroupChat = async (userId, chatId) => {
+  const userDocRef = doc(db, "users", userId);
+  const chatDocRef = doc(db, "groupChats", chatId);
+
+  try {
+    await updateDoc(chatDocRef, {
+      users: arrayRemove(userId),
+    });
+
+    await updateDoc(userDocRef, {
+      groupChats: arrayRemove(chatId),
+    });
+
+    console.log("User removed from group chat successfully");
+  } catch (error) {
+    console.error("Error removing user from group chat:", error);
+    throw new Error("Failed to remove user from group chat");
   }
 };

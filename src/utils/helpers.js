@@ -70,3 +70,26 @@ export function transformMessages(chat) {
 
   return transformedMessages;
 }
+
+export function setSeen(chats, setChats, chatId) {
+  setChats(
+    chats.map((chat) =>
+      chat.id === chatId ? { ...chat, newMessage: false } : chat
+    )
+  );
+}
+
+export const isUserInGroup = (chatId, chats) => {
+  const matchingChat = chats.find((chat) => {
+    return (
+      chat.id === chatId && (chat.type === "private" || chat.type === "group")
+    );
+  });
+
+  return !!matchingChat; // Concise boolean check using double negation
+};
+
+export const removeChatById = (setChats, id) => {
+  // Update chats directly using the callback function with setChats
+  setChats((currentChats) => currentChats.filter((chat) => chat.id !== id));
+};
