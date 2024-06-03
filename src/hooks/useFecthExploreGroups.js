@@ -1,31 +1,31 @@
 import { fetchExploreGroups, fetchUserChats } from "../services/firebase";
 import { useEffect, useState } from "react";
 
-const useFetchChats = (userId, handleNewMessage, setChats) => {
+const useFetchExploreGroups = (userId, setChats) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchChats = async () => {
+    const fetchExploreGroupsApi = async () => {
       try {
         setIsLoading(true);
-        const fetchedChats = await fetchUserChats(userId, handleNewMessage);
         const fetchedExploreGroups = await fetchExploreGroups(userId);
-        setChats(() => [...fetchedChats, ...fetchedExploreGroups]);
+        console.log("usao");
+        setChats((chats) => [...chats, ...fetchedExploreGroups]);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error fetching user chats:", error);
+        console.error("Error fetching explore groups:", error);
         setError(error);
       }
       setIsLoading(false);
     };
 
     if (userId) {
-      fetchChats();
+      fetchExploreGroupsApi();
     }
-  }, [userId]);
+  }, [userId, setChats]);
 
   return { isLoading, error };
 };
 
-export default useFetchChats;
+export default useFetchExploreGroups;

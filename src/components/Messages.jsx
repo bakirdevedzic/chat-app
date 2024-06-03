@@ -2,6 +2,12 @@ import { transformMessages } from "../utils/helpers";
 import Message from "./Message";
 
 function Messages({ chat }) {
+  if (!chat.messages)
+    return (
+      <div className="h-full flex justify-center items-center align-middle">
+        No messages yet
+      </div>
+    );
   const transformedMessages = transformMessages(chat);
   console.log(transformedMessages);
 

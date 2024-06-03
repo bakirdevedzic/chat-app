@@ -1,7 +1,20 @@
-import { addUserToGroupChat, fetchChatMessages } from "../services/firebase";
+import {
+  addUserToGroupChat,
+  fetchChatAndAddListener,
+  fetchChatMessages,
+} from "../services/firebase";
 import { useEffect, useState } from "react";
+import { removeChatById } from "../utils/helpers";
 
-const useJoinChat = (chatId, setChats, joinChat, setJoinChat) => {
+const useJoinChat = (
+  chatId,
+  setChats,
+  joinChat,
+  setJoinChat,
+  chats,
+  onNewMessage,
+  userId
+) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -10,7 +23,14 @@ const useJoinChat = (chatId, setChats, joinChat, setJoinChat) => {
       const fetchChats = async () => {
         try {
           setIsLoading(true);
-          const fetchedChat = await fetchChatMessages(chatId, "group");
+          removeChatById(setChats, chatId);
+
+          const fetchedChat = await fetchChatAndAddListener(
+            chatId,
+            "group",
+            onNewMessage,
+            userId
+          );
           await addUserToGroupChat("4QXIEU92mtzeoxE3x9f0", chatId);
           setChats((chats) => [...chats, fetchedChat]);
           setJoinChat(false);

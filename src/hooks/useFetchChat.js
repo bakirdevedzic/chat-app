@@ -1,7 +1,8 @@
-import { fetchExploreGroups, fetchUserChats } from "../services/firebase";
+import { fetchChatAndAddListener, fetchChatMessages } from "../services/firebase";
 import { useEffect, useState } from "react";
+import { removeChatById } from "../utils/helpers";
 
-const useFetchChats = (userId, handleNewMessage, setChats) => {
+const useFetchChat = (chatId, setChats,onNewMessage userId) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -9,9 +10,9 @@ const useFetchChats = (userId, handleNewMessage, setChats) => {
     const fetchChats = async () => {
       try {
         setIsLoading(true);
-        const fetchedChats = await fetchUserChats(userId, handleNewMessage);
-        const fetchedExploreGroups = await fetchExploreGroups(userId);
-        setChats(() => [...fetchedChats, ...fetchedExploreGroups]);
+        setChats((chats) => removeChatById(chatId, chats));
+        const fetchedChat = await fetchChatAndAddListener(chatId, "group", ,userId);
+        setChats((chats) => [...chats, fetchedChat]);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching user chats:", error);
@@ -20,12 +21,12 @@ const useFetchChats = (userId, handleNewMessage, setChats) => {
       setIsLoading(false);
     };
 
-    if (userId) {
+    if (chatId) {
       fetchChats();
     }
-  }, [userId]);
+  }, [chatId]);
 
   return { isLoading, error };
 };
 
-export default useFetchChats;
+export default useFetchChat;

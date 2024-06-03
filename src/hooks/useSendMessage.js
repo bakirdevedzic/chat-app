@@ -10,17 +10,15 @@ function useSendMessage(chatId, chatType) {
     setError(null);
 
     try {
-      await sendMessage(chatId, chatType, messageContent); // Call your original function
-      console.log("Message sent successfully");
+      await sendMessage(chatId, chatType, messageContent);
     } catch (error) {
-      console.error("Error sending message:", error);
-      setError(error); // Store error for handling
+      setError(error);
     } finally {
       setIsSending(false);
     }
   };
 
-  return { triggerSendMessage, isSending, error }; // Return renamed function
+  return { triggerSendMessage, isSending, error };
 }
 
 export default useSendMessage;

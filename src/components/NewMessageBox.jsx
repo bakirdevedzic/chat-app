@@ -9,9 +9,9 @@ function NewMessageBox({ triggerSendMessage }) {
     if (isSendingDisabled) {
       const timer = setTimeout(() => {
         setIsSendingDisabled(false);
-      }, 5000);
+      }, 2000);
 
-      return () => clearTimeout(timer); // Clean up the timer on component unmount
+      return () => clearTimeout(timer);
     }
   }, [isSendingDisabled]);
 
