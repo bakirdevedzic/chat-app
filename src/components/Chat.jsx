@@ -41,9 +41,11 @@ function Chat() {
       </div>
     );
   return (
-    <div className="grid grid-rows-[auto_1fr_90px] w-[100%] h-full">
+    <div className="grid grid-rows-[auto_1fr_90px] w-[100%] h-full sm:h-[100vh]">
       <ChatName chat={chat} />
+
       <Messages chat={chat} setLoadChat={setLoadChat} />
+
       <NewMessageBox triggerSendMessage={triggerSendMessage} />
     </div>
   );
