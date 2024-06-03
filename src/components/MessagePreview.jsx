@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { setSeen } from "../utils/helpers";
 import { useContext } from "react";
 import { ChatContext } from "../pages/AppLayout";
@@ -23,7 +23,7 @@ const MessagePreview = ({ chat, setActiveTab }) => {
 
   return (
     <div
-      className="flex items-start justify-between  p-4 pl-[1.5rem] hover:bg-primary-indigo hover:bg-opacity-20 hover:cursor-pointer"
+      className="flex items-start justify-between  p-4 pl-[1.5rem] hover:bg-primary-indigo hover:bg-opacity-20 hover:cursor-pointer border-b"
       onClick={() => navigate(`/chat/${chat.id}`)}
     >
       <div className="font-bold text-gray-900">{name}</div>
