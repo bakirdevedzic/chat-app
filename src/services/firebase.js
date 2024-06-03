@@ -15,6 +15,7 @@ import {
   arrayUnion,
   arrayRemove,
   getCountFromServer,
+  startAfter,
 } from "firebase/firestore";
 import { getUsers } from "../utils/helpers";
 
@@ -92,6 +93,7 @@ export const fetchUserChats = async (userId, onNewMessage) => {
           newMessage: false,
           participants: participantNames,
           messages,
+          fetchedMessageAmount: messages.length,
           latestMessageTimestamp,
         };
       })
@@ -131,6 +133,7 @@ export const fetchUserChats = async (userId, onNewMessage) => {
           newMessage: false,
           ...chatData,
           messages,
+          fetchedMessageAmount: messages.length,
           participants: participantNames,
           latestMessageTimestamp,
         };
@@ -236,6 +239,7 @@ export const fetchChatMessages = async (chatId, chatType, userId) => {
       ...chatData,
       participants: participantNames,
       messages,
+      fetchedMessageAmount: messages.length,
       latestMessageTimestamp,
     };
   } catch (error) {
@@ -343,5 +347,35 @@ const getMessageCount = async (chatId, chatType) => {
   } catch (error) {
     console.error("Error getting message count:", error);
     throw new Error("Failed to get message count");
+  }
+};
+
+export const loadMoreMessages = async (
+  chatId,
+  chatType,
+  lastTimestamp,
+  pageSize = 20
+) => {
+  try {
+    const chatCollection = chatType === "group" ? "groupChats" : "privateChats";
+    const messagesRef = collection(db, chatCollection, chatId, "messages");
+
+    const messagesQuery = query(
+      messagesRef,
+      orderBy("timestamp", "desc"),
+      startAfter(lastTimestamp),
+      limit(pageSize)
+    );
+
+    const messagesSnapshot = await getDocs(messagesQuery);
+    const messages = messagesSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return messages;
+  } catch (error) {
+    console.error("Error loading more messages:", error);
+    throw new Error("Failed to load more messages");
   }
 };

@@ -93,3 +93,20 @@ export const removeChatById = (setChats, id) => {
   // Update chats directly using the callback function with setChats
   setChats((currentChats) => currentChats.filter((chat) => chat.id !== id));
 };
+
+export const appendMessagesToChat = (chats, setChats, chatId, messages) => {
+  const matchingChatIndex = chats.findIndex((chat) => chat.id === chatId);
+
+  if (matchingChatIndex !== -1) {
+    setChats((currentChats) => {
+      const updatedChats = [...currentChats];
+      updatedChats[matchingChatIndex].messages =
+        updatedChats[matchingChatIndex].messages.concat(messages);
+      updatedChats[matchingChatIndex].fetchedMessageAmount =
+        updatedChats[matchingChatIndex].messages.length;
+      return updatedChats;
+    });
+  } else {
+    console.warn("Chat not found with ID:", chatId);
+  }
+};

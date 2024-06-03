@@ -4,17 +4,28 @@ import ChatName from "./ChatName";
 import Messages from "./Messages";
 import NewMessageBox from "./NewMessageBox";
 import useSendMessage from "../hooks/useSendMessage";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ChatContext } from "../pages/AppLayout";
 import { isUserInGroup } from "../utils/helpers";
+import useLoadMoreMessages from "../hooks/useLoadMoreMessages";
 
 function Chat() {
-  const { chats } = useContext(ChatContext);
+  const { chats, setChats } = useContext(ChatContext);
+  const [loadChat, setLoadChat] = useState(false);
   const { id } = useParams();
 
   const isUserInChat = isUserInGroup(id, chats);
 
   const chat = chats?.find((chat) => chat.id === id);
+  const { loading } = useLoadMoreMessages(
+    id,
+    chat.type,
+    chat.messages[chat.messages.length - 1].timestamp,
+    setChats,
+    setLoadChat,
+    loadChat,
+    chats
+  );
 
   const { triggerSendMessage } = useSendMessage(id, chat?.type);
   const name =
@@ -28,15 +39,10 @@ function Chat() {
   return (
     <div className="grid grid-rows-[auto_1fr_90px] w-[100%] h-full">
       <ChatName chat={chat} />
-      <Messages chat={chat} />
+      <Messages chat={chat} setLoadChat={setLoadChat} />
       <NewMessageBox triggerSendMessage={triggerSendMessage} />
     </div>
   );
 }
 
 export default Chat;
-{
-  /* <button onClick={() => setShowSidebar(true)} className="text-white">
-        Show sidebar
-      </button> */
-}
