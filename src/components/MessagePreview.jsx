@@ -3,11 +3,15 @@ import { setSeen } from "../utils/helpers";
 import { useContext } from "react";
 import { ChatContext } from "../pages/AppLayout";
 
-const MessagePreview = ({ chat, setActiveTab }) => {
+const MessagePreview = ({ chat, setActiveTab, isSearch }) => {
   const { userId, chats, setChats, setJoinChat } = useContext(ChatContext);
   const navigate = useNavigate();
-  const name =
-    chat.type === "private" ? chat.participants[0].username : chat.name;
+
+  const name = isSearch
+    ? chat.username
+    : chat.type === "private"
+    ? chat.participants[0].username
+    : chat.name;
 
   const isExplore = chat.type === "explore";
 

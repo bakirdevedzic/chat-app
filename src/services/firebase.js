@@ -16,6 +16,8 @@ import {
   arrayRemove,
   getCountFromServer,
   startAfter,
+  startAt,
+  endAt,
 } from "firebase/firestore";
 import { getUsers } from "../utils/helpers";
 
@@ -378,4 +380,24 @@ export const loadMoreMessages = async (
     console.error("Error loading more messages:", error);
     throw new Error("Failed to load more messages");
   }
+};
+
+export const searchUsers = async (searchText) => {
+  const usersRef = collection(db, "users");
+
+  const q = query(
+    usersRef,
+    orderBy("username"),
+    startAt(searchText),
+    endAt(searchText + "\uf8ff")
+  );
+
+  const querySnapshot = await getDocs(q);
+  const users = [];
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    users.push({ id: doc.id, username: data.username });
+  });
+
+  return users;
 };

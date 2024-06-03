@@ -5,6 +5,7 @@ import ProfilePreview from "./ProfilePreview";
 import TypesOfChats from "./TypesOfChats";
 import { useContext, useEffect, useState } from "react";
 import { ChatContext } from "../pages/AppLayout";
+import useSearchPerson from "../hooks/useSearchPerson";
 
 function SidebarComponent() {
   const { chats, showSidebar, sidebarVisible, sidebarHidden, setShowSidebar } =
@@ -21,6 +22,8 @@ function SidebarComponent() {
   const [activeTab, setActiveTab] = useState("Private");
   const [filteredChats, setFilteredChats] = useState([]);
 
+  const { search, setSearch, loading, people } = useSearchPerson();
+  console.log("people", people);
   useEffect(() => {
     if (activeTab === "Private") {
       setFilteredChats(chats.filter((chat) => chat.type === "private"));
@@ -37,18 +40,32 @@ function SidebarComponent() {
       <div className={className}>
         <ProfilePreview />
         <div className="flex items-center justify-center">
-          <Search />
+          <Search setSearch={setSearch} search={search} />
         </div>
-        <TypesOfChats activeTab={activeTab} setActiveTab={setActiveTab} />
-        <div className="pt-2 divide-y-2 ">
-          {filteredChats?.map((chat) => (
+        {people.length > 0 ? (
+          people.map((person) => (
             <MessagePreview
-              key={chat.id}
-              chat={chat}
+              key={person.id}
+              isSearch={true}
+              chat={person}
               setActiveTab={setActiveTab}
             />
-          ))}
-        </div>
+          ))
+        ) : (
+          <>
+            <TypesOfChats activeTab={activeTab} setActiveTab={setActiveTab} />
+            <div className="pt-2 divide-y-2">
+              {filteredChats?.map((chat) => (
+                <MessagePreview
+                  key={chat.id}
+                  isSearch={false}
+                  chat={chat}
+                  setActiveTab={setActiveTab}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {sidebarHidden && showSidebar && (
