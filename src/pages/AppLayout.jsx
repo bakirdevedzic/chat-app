@@ -21,6 +21,8 @@ function AppLayout() {
 
   const user = auth.currentUser;
   console.log(user);
+  const userUid = user?.uid;
+  console.log(userUid);
 
   const [chats, setChats] = useState([]);
   const [joinChat, setJoinChat] = useState(false);
@@ -47,7 +49,7 @@ function AppLayout() {
     setJoinChat,
     chats,
     handleNewMessage,
-    "4QXIEU92mtzeoxE3x9f0"
+    userUid
   );
 
   const { isLoading: isLoading3 } = useLeaveChat(
@@ -59,11 +61,7 @@ function AppLayout() {
     chats
   );
 
-  const { isLoading } = useFetchChats(
-    "4QXIEU92mtzeoxE3x9f0",
-    handleNewMessage,
-    setChats
-  );
+  const { isLoading } = useFetchChats(userUid, handleNewMessage, setChats);
 
   const {
     search,
