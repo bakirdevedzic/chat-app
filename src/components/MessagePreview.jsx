@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { setSeen } from "../utils/helpers";
+import { hasPrivateChat, setSeen } from "../utils/helpers";
 import { useContext } from "react";
 import { ChatContext } from "../pages/AppLayout";
 
@@ -25,11 +25,15 @@ const MessagePreview = ({ chat, setActiveTab, isSearch }) => {
       setActiveTab("Groups");
     }
   }
-
+  const personAlreadyInChat = hasPrivateChat(chats, chat.id);
+  console.log("person", personAlreadyInChat);
   function handlePersonClick() {
-    if (isSearch) {
+    if (isSearch && !personAlreadyInChat) {
       navigate("/chat/new");
       setSelectedPerson(chat);
+    } else if (isSearch && personAlreadyInChat) {
+      const chatId = chats.find((c) => c.users.includes(chat.id)).id;
+      navigate(`/chat/${chatId}`);
     } else {
       navigate(`/chat/${chat.id}`);
     }

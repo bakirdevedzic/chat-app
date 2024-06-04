@@ -20,7 +20,6 @@ function useCreatePrivateChat(
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     async function createChat() {
-      console.log("message2", message);
       const chatId = await createPrivateChat(userId, personId, message);
       const fetchChat = await fetchChatAndAddListener(
         chatId,

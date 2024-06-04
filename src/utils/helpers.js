@@ -110,3 +110,8 @@ export const appendMessagesToChat = (chats, setChats, chatId, messages) => {
     console.warn("Chat not found with ID:", chatId);
   }
 };
+
+export function hasPrivateChat(chats, personId) {
+  
+  return chats.some((chat) => chat.type === "private" && chat.users.includes(personId));
+}

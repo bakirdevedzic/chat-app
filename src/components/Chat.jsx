@@ -19,7 +19,7 @@ function Chat() {
 
   let isUserInChat = isUserInGroup(id, chats);
   let chat;
-  if (id === "new") {
+  if (id === "new" && selectedPerson) {
     chat = {
       ...selectedPerson,
       type: "private",
