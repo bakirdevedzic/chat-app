@@ -5,11 +5,18 @@ import ProfilePreview from "./ProfilePreview";
 import TypesOfChats from "./TypesOfChats";
 import { useContext, useEffect, useState } from "react";
 import { ChatContext } from "../pages/AppLayout";
-import useSearchPerson from "../hooks/useSearchPerson";
 
 function SidebarComponent() {
-  const { chats, showSidebar, sidebarVisible, sidebarHidden, setShowSidebar } =
-    useContext(ChatContext);
+  const {
+    chats,
+    showSidebar,
+    sidebarVisible,
+    sidebarHidden,
+    setShowSidebar,
+    search,
+    setSearch,
+    people,
+  } = useContext(ChatContext);
 
   let classNameBase =
     "h-full bg-white row-span-full col-[1/2]  flex flex-col border-solid border-0 border-r border-slate-200  fixed top-0 left-0 z-10 w-[300px] overflow-y-auto transition-[margin-left] ease-in-out duration-500 divide-y";
@@ -22,8 +29,6 @@ function SidebarComponent() {
   const [activeTab, setActiveTab] = useState("Private");
   const [filteredChats, setFilteredChats] = useState([]);
 
-  const { search, setSearch, loading, people } = useSearchPerson();
-  console.log("people", people);
   useEffect(() => {
     if (activeTab === "Private") {
       setFilteredChats(chats.filter((chat) => chat.type === "private"));
@@ -34,7 +39,6 @@ function SidebarComponent() {
     }
   }, [activeTab, chats]);
 
-  console.log("filteredChats", filteredChats);
   return (
     <>
       <div className={className}>

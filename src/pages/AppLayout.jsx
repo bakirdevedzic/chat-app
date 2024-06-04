@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import SidebarComponent from "../components/SidebarComponent";
 import { useMediaQuery } from "react-responsive";
 import Chat from "../components/Chat";
@@ -6,6 +6,7 @@ import useFetchChats from "../hooks/useFetchChats";
 import useJoinChat from "../hooks/useJoinChat";
 import { useParams } from "react-router-dom";
 import useLeaveChat from "../hooks/useLeaveChat";
+import useSearchPerson from "../hooks/useSearchPerson";
 
 export const ChatContext = createContext();
 
@@ -60,7 +61,15 @@ function AppLayout() {
     setChats
   );
 
-  console.log("chats", chats);
+  const {
+    search,
+    setSearch,
+    loading: loading4,
+    people,
+    selectedPerson,
+    setSelectedPerson,
+    setPeople,
+  } = useSearchPerson();
 
   if (isLoading && isLoading2 && isLoading3) return <div>Loading...</div>;
 
@@ -76,6 +85,13 @@ function AppLayout() {
         userId,
         setJoinChat,
         setLeaveChat,
+        search,
+        setSearch,
+        people,
+        setPeople,
+        selectedPerson,
+        setSelectedPerson,
+        handleNewMessage,
       }}
     >
       <div className="flex flex-row h-[calc(100dvh)] sm:flex sm:flex-col">

@@ -4,7 +4,8 @@ import { useContext } from "react";
 import { ChatContext } from "../pages/AppLayout";
 
 const MessagePreview = ({ chat, setActiveTab, isSearch }) => {
-  const { userId, chats, setChats, setJoinChat } = useContext(ChatContext);
+  const { userId, chats, setChats, setJoinChat, setSelectedPerson } =
+    useContext(ChatContext);
   const navigate = useNavigate();
 
   const name = isSearch
@@ -25,10 +26,19 @@ const MessagePreview = ({ chat, setActiveTab, isSearch }) => {
     }
   }
 
+  function handlePersonClick() {
+    if (isSearch) {
+      navigate("/chat/new");
+      setSelectedPerson(chat);
+    } else {
+      navigate(`/chat/${chat.id}`);
+    }
+  }
+
   return (
     <div
       className="flex items-start justify-between  p-4 pl-[1.5rem] hover:bg-primary-indigo hover:bg-opacity-20 hover:cursor-pointer border-b"
-      onClick={() => navigate(`/chat/${chat.id}`)}
+      onClick={handlePersonClick}
     >
       <div className="font-bold text-gray-900">{name}</div>
       {isExplore ? (

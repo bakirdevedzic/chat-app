@@ -11,7 +11,7 @@ const useFetchChat = (chatId, setChats,onNewMessage userId) => {
       try {
         setIsLoading(true);
         setChats((chats) => removeChatById(chatId, chats));
-        const fetchedChat = await fetchChatAndAddListener(chatId, "group", ,userId);
+        const fetchedChat = await fetchChatAndAddListener(chatId, "group", onNewMessage,userId);
         setChats((chats) => [...chats, fetchedChat]);
         setIsLoading(false);
       } catch (error) {

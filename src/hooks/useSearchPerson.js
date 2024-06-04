@@ -7,6 +7,7 @@ function useSearchPerson() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [people, setPeople] = useState([]);
+  const [selectedPerson, setSelectedPerson] = useState(null);
   const searchTimeoutRef = useRef(null);
 
   useEffect(() => {
@@ -44,8 +45,15 @@ function useSearchPerson() {
       }
     };
   }, [search]);
-  console.log("people2", people);
 
-  return { search, setSearch, loading, people };
+  return {
+    search,
+    setSearch,
+    loading,
+    people,
+    selectedPerson,
+    setSelectedPerson,
+    setPeople,
+  };
 }
 export default useSearchPerson;

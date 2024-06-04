@@ -10,19 +10,34 @@ import { isUserInGroup } from "../utils/helpers";
 import useLoadMoreMessages from "../hooks/useLoadMoreMessages";
 
 function Chat() {
-  const { chats, setChats } = useContext(ChatContext);
+  const { chats, setChats, selectedPerson, handleNewMessage } =
+    useContext(ChatContext);
+
   const [loadChat, setLoadChat] = useState(false);
+
   const { id } = useParams();
 
-  const isUserInChat = isUserInGroup(id, chats);
+  let isUserInChat = isUserInGroup(id, chats);
+  let chat;
+  if (id === "new") {
+    chat = {
+      ...selectedPerson,
+      type: "private",
+      messages: [],
+      participants: [{ username: selectedPerson.username }],
+    };
+    isUserInChat = true;
+  } else {
+    chat = chats?.find((chat) => chat.id === id)
+      ? chats?.find((chat) => chat.id === id)
+      : { type: "group" };
+  }
 
-  const chat = chats?.find((chat) => chat.id === id)
-    ? chats?.find((chat) => chat.id === id)
-    : { type: "group" };
-
+  console.log("chat", chat);
   const lastMessageTimestamp = chat?.messages?.length
     ? chat.messages[chat.messages.length - 1].timestamp
     : null;
+
   const { loading } = useLoadMoreMessages(
     id,
     chat.type,
@@ -34,6 +49,7 @@ function Chat() {
   );
 
   const { triggerSendMessage } = useSendMessage(id, chat?.type);
+
   if (!isUserInChat)
     return (
       <div className="h-full flex justify-center items-center align-middle text-2xl font-bold text-gray-600 text-center">

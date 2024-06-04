@@ -1,9 +1,30 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { IoIosSend } from "react-icons/io";
+import { ChatContext } from "../pages/AppLayout";
+import useCreatePrivateChat from "../hooks/useCreatePrivateChat";
 
 function NewMessageBox({ triggerSendMessage }) {
+  const {
+    selectedPerson,
+    chats,
+    setChats,
+    handleNewMessage,
+    setSelectedPerson,
+    setPeople,
+  } = useContext(ChatContext);
   const [message, setMessage] = useState("");
   const [isSendingDisabled, setIsSendingDisabled] = useState(false);
+  const [createNewChat, setCreateNewChat] = useState(false);
+  const [messageNewChat, setMessageNewChat] = useState("");
+  const { loading } = useCreatePrivateChat(
+    "4QXIEU92mtzeoxE3x9f0",
+    selectedPerson?.id,
+    messageNewChat,
+    setChats,
+    createNewChat,
+    setCreateNewChat,
+    handleNewMessage
+  );
 
   useEffect(() => {
     if (isSendingDisabled) {
@@ -21,6 +42,10 @@ function NewMessageBox({ triggerSendMessage }) {
       (event.type === "click" && message.trim())
     ) {
       if (!isSendingDisabled) {
+        if (selectedPerson) {
+          setMessageNewChat(message);
+          setCreateNewChat(true);
+        }
         triggerSendMessage(message.trim());
         setMessage("");
         setIsSendingDisabled(true);

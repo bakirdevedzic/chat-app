@@ -7,7 +7,7 @@ const useLeaveChat = (chatId, setChats, leaveChat, setLeaveChat, chats) => {
   const [error, setError] = useState(null);
 
   const chat = chats.find((chat) => chat.id === chatId);
-  console.log("chat", chat);
+
   useEffect(() => {
     if (leaveChat) {
       const fetchChats = async () => {

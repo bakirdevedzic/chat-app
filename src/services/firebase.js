@@ -18,6 +18,7 @@ import {
   startAfter,
   startAt,
   endAt,
+  addDoc,
 } from "firebase/firestore";
 import { getUsers } from "../utils/helpers";
 
@@ -400,4 +401,51 @@ export const searchUsers = async (searchText) => {
   });
 
   return users;
+};
+
+export const createPrivateChat = async (userId1, userId2, initialMessage) => {
+  try {
+    const chatRef = await addDoc(collection(db, "privateChats"), {
+      type: "private",
+      users: [userId1, userId2],
+      createdAt: serverTimestamp(),
+    });
+
+    const messageRef = await addDoc(collection(chatRef, "messages"), {
+      text: initialMessage,
+      senderId: userId1,
+      timestamp: serverTimestamp(),
+    });
+
+    await addUserToChat(userId1, chatRef.id, "private");
+    await addUserToChat(userId2, chatRef.id, "private");
+
+    console.log("Private chat created successfully with ID:", chatRef.id);
+    return chatRef.id;
+  } catch (error) {
+    console.error("Error creating private chat:", error);
+    throw new Error("Failed to create private chat");
+  }
+};
+
+export const addUserToChat = async (userId, chatId, chatType) => {
+  const userDocRef = doc(db, "users", userId);
+  const chatCollection = chatType === "group" ? "groupChats" : "privateChats";
+  const chatDocRef = doc(db, chatCollection, chatId);
+
+  try {
+    await updateDoc(chatDocRef, {
+      users: arrayUnion(userId),
+    });
+
+    const userChatArray = chatType === "group" ? "groupChats" : "privateChats";
+    await updateDoc(userDocRef, {
+      [userChatArray]: arrayUnion(chatId),
+    });
+
+    console.log(`User added to ${chatType} chat successfully`);
+  } catch (error) {
+    console.error(`Error adding user to ${chatType} chat:`, error);
+    throw new Error(`Failed to add user to ${chatType} chat`);
+  }
 };

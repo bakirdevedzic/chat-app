@@ -3,19 +3,17 @@ import { transformMessages } from "../utils/helpers";
 import Message from "./Message";
 
 function Messages({ chat, setLoadChat }) {
-  if (!chat.messages)
+  if (!chat.messages || chat.messages.length === 0)
     return (
       <div className="h-full flex justify-center items-center align-middle">
         No messages yet
       </div>
     );
   const transformedMessages = transformMessages(chat);
-  console.log(transformedMessages);
 
   function loadMoreMessages() {
     setLoadChat(true);
   }
-  console.log(chat.messages, " ", chat.fetchedMessageAmount);
 
   return (
     <div className="flex flex-col-reverse bg-slate-50 overflow-y-scroll items-start flex-grow">

@@ -10,7 +10,7 @@ const useFetchExploreGroups = (userId, setChats) => {
       try {
         setIsLoading(true);
         const fetchedExploreGroups = await fetchExploreGroups(userId);
-        console.log("usao");
+
         setChats((chats) => [...chats, ...fetchedExploreGroups]);
         setIsLoading(false);
       } catch (error) {

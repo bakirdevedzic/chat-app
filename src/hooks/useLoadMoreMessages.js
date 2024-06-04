@@ -23,7 +23,7 @@ const useLoadMoreMessages = (
           chatType,
           lastTimestamp
         );
-        console.log("messages", messages);
+
         appendMessagesToChat(chats, setChats, chatId, messages);
         setLoadChat(false);
         setIsLoading(false);
