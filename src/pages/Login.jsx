@@ -8,7 +8,6 @@ function Login() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    console.log(email, password);
   }
   return (
     <div className="bg-gray-50 text-[#333]">

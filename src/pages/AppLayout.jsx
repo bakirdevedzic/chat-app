@@ -7,6 +7,7 @@ import useJoinChat from "../hooks/useJoinChat";
 import { useParams } from "react-router-dom";
 import useLeaveChat from "../hooks/useLeaveChat";
 import useSearchPerson from "../hooks/useSearchPerson";
+import { auth } from "../firebase";
 
 export const ChatContext = createContext();
 
@@ -17,6 +18,9 @@ function AppLayout() {
   const sidebarHidden = useMediaQuery({ maxWidth: 850 });
   const sidebarVisible = useMediaQuery({ minWidth: 851 });
   const { id } = useParams();
+
+  const user = auth.currentUser;
+  console.log(user);
 
   const [chats, setChats] = useState([]);
   const [joinChat, setJoinChat] = useState(false);

@@ -1,15 +1,35 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 function Register() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [username, setUsername] = useState();
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log(email, password);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      const user = auth.currentUser;
+      console.log(user);
+      if (user) {
+        navigate("/chat/new_user");
+        await setDoc(doc(db, "users", user.uid), {
+          email: user.email,
+          privateChats: [],
+          groupChats: [],
+          uid: user.uid,
+          username: username,
+        });
+      }
+    } catch (error) {
+      setError(error.message);
+    }
   }
   return (
     <div className="bg-gray-50 text-[#333]">
@@ -60,6 +80,12 @@ function Register() {
                 Register
               </button>
             </div>
+
+            {error && (
+              <div className="h-10 flex items-center justify-center text-red-600">
+                <p>{error}</p>
+              </div>
+            )}
           </form>
           <div className="h-10 flex items-center justify-center">
             <button onClick={() => navigate("/login")}>

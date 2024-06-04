@@ -33,7 +33,6 @@ function Chat() {
       : { type: "group" };
   }
 
-  console.log("chat", chat);
   const lastMessageTimestamp = chat?.messages?.length
     ? chat.messages[chat.messages.length - 1].timestamp
     : null;
@@ -49,6 +48,10 @@ function Chat() {
   );
 
   const { triggerSendMessage } = useSendMessage(id, chat?.type);
+
+  if (id === "new_user") {
+    return <div>You have successfully registered!</div>;
+  }
 
   if (!isUserInChat)
     return (
