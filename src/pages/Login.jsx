@@ -1,13 +1,21 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { auth } from "../firebase";
 
 function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const navigate = useNavigate();
-
-  function handleSubmit(e) {
+  const [error, setError] = useState(null);
+  async function handleSubmit(e) {
     e.preventDefault();
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/chat/logged_in");
+    } catch (error) {
+      setError(error.message);
+    }
   }
   return (
     <div className="bg-gray-50 text-[#333]">
@@ -49,6 +57,11 @@ function Login() {
                 Log in
               </button>
             </div>
+            {error && (
+              <div className="h-10 flex items-center justify-center text-red-600">
+                <p>{error}</p>
+              </div>
+            )}
           </form>
           <div className="h-10 flex items-center justify-center">
             <button onClick={() => navigate("/register")}>

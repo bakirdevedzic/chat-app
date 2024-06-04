@@ -52,6 +52,7 @@ function Chat() {
   if (id === "new_user") {
     return <div>You have successfully registered!</div>;
   }
+  if (id === "logged_in") return <div>Welcome back!</div>;
 
   if (!isUserInChat)
     return (
