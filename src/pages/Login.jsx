@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const navigate = useNavigate();
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -49,6 +51,11 @@ function Login() {
               </button>
             </div>
           </form>
+          <div className="h-10 flex items-center justify-center">
+            <button onClick={() => navigate("/register")}>
+              Don&apos;t have account?
+            </button>
+          </div>
         </div>
       </div>
     </div>
