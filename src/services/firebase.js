@@ -180,7 +180,7 @@ export const addMessageListeners = (chats, onNewMessage, setChats) => {
   });
 };
 
-export const sendMessage = async (chatId, chatType, message) => {
+export const sendMessage = async (chatId, chatType, message, userId) => {
   try {
     const chatDocRef = doc(
       collection(db, chatType === "private" ? "privateChats" : "groupChats"),
@@ -191,7 +191,7 @@ export const sendMessage = async (chatId, chatType, message) => {
     const newMessageRef = doc(messagesCollectionRef);
     const newMessage = {
       text: message,
-      sender: "4QXIEU92mtzeoxE3x9f0",
+      sender: userId,
       timestamp: serverTimestamp(),
     };
 
@@ -321,6 +321,7 @@ export const addUserToGroupChat = async (userId, chatId) => {
 };
 
 export const removeUserFromGroupChat = async (userId, chatId) => {
+  console.log(userId, chatId);
   const userDocRef = doc(db, "users", userId);
   const chatDocRef = doc(db, "groupChats", chatId);
 

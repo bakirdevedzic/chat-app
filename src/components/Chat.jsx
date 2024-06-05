@@ -5,16 +5,25 @@ import Messages from "./Messages";
 import NewMessageBox from "./NewMessageBox";
 import useSendMessage from "../hooks/useSendMessage";
 import { useContext, useState } from "react";
-import { ChatContext } from "../pages/AppLayout";
 import { isUserInGroup } from "../utils/helpers";
 import useLoadMoreMessages from "../hooks/useLoadMoreMessages";
+import useJoinChat from "../hooks/useJoinChat";
+import Spinner from "../ui/Spinner";
+import { mainContext } from "../context/MainContext";
 
 function Chat() {
-  const { chats, setChats, selectedPerson, handleNewMessage } =
-    useContext(ChatContext);
+  const {
+    chats,
+    setChats,
+    selectedPerson,
+    handleNewMessage,
+    userId,
+    joinChat,
+    setJoinChat,
+  } = useContext(mainContext);
 
   const [loadChat, setLoadChat] = useState(false);
-
+  console.log(chats);
   const { id } = useParams();
 
   let isUserInChat = isUserInGroup(id, chats);
@@ -47,6 +56,16 @@ function Chat() {
     chats
   );
 
+  const { isLoading: isLoading2 } = useJoinChat(
+    id,
+    setChats,
+    joinChat,
+    setJoinChat,
+    chats,
+    handleNewMessage,
+    userId
+  );
+
   const { triggerSendMessage } = useSendMessage(id, chat?.type);
 
   if (id === "new_user") {
@@ -60,6 +79,8 @@ function Chat() {
         You have no access to this chat!
       </div>
     );
+
+  if (isLoading2) return <Spinner />;
   return (
     <div className="grid grid-rows-[auto_1fr_90px] w-[100%] h-full sm:h-[100vh] us:h-[100vh]">
       <ChatName chat={chat} />

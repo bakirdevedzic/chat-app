@@ -1,23 +1,19 @@
 import { useState, useEffect, useContext } from "react";
 import { IoIosSend } from "react-icons/io";
-import { ChatContext } from "../pages/AppLayout";
 import useCreatePrivateChat from "../hooks/useCreatePrivateChat";
+import { mainContext } from "../context/MainContext";
 
 function NewMessageBox({ triggerSendMessage }) {
-  const {
-    selectedPerson,
-    chats,
-    setChats,
-    handleNewMessage,
-    setSelectedPerson,
-    setPeople,
-  } = useContext(ChatContext);
+  const { selectedPerson, userId, setChats, handleNewMessage } =
+    useContext(mainContext);
   const [message, setMessage] = useState("");
   const [isSendingDisabled, setIsSendingDisabled] = useState(false);
+
   const [createNewChat, setCreateNewChat] = useState(false);
   const [messageNewChat, setMessageNewChat] = useState("");
-  const { loading } = useCreatePrivateChat(
-    "4QXIEU92mtzeoxE3x9f0",
+
+  useCreatePrivateChat(
+    userId,
     selectedPerson?.id,
     messageNewChat,
     setChats,

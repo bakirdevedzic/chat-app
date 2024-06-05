@@ -4,7 +4,7 @@ import {
   fetchChatAndAddListener,
 } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
-import { ChatContext } from "../pages/AppLayout";
+import { mainContext } from "../context/MainContext";
 
 function useCreatePrivateChat(
   userId,
@@ -15,7 +15,7 @@ function useCreatePrivateChat(
   setCreateNewChat,
   onNewMessage
 ) {
-  const { setPeople, setSelectedPerson } = useContext(ChatContext);
+  const { setPeople, setSelectedPerson } = useContext(mainContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   useEffect(() => {

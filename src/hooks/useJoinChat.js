@@ -15,7 +15,7 @@ const useJoinChat = (
   onNewMessage,
   userId
 ) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const useJoinChat = (
             onNewMessage,
             userId
           );
-          await addUserToGroupChat("4QXIEU92mtzeoxE3x9f0", chatId);
+          await addUserToGroupChat(userId, chatId);
           setChats((chats) => [...chats, fetchedChat]);
           setJoinChat(false);
           setIsLoading(false);

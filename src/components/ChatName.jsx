@@ -1,12 +1,12 @@
 import { useContext } from "react";
-import { ChatContext } from "../pages/AppLayout";
+
 import { PiChatsCircleBold } from "react-icons/pi";
+import { mainContext } from "../context/MainContext";
 
 function ChatName({ chat }) {
-  const { setShowSidebar } = useContext(ChatContext);
+  const { setShowSidebar, setLeaveChat } = useContext(mainContext);
   const name =
     chat?.type === "private" ? chat.participants[0].username : chat?.name;
-  const { setLeaveChat } = useContext(ChatContext);
   function handleLeaveChat() {
     setLeaveChat(true);
   }

@@ -1,11 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { hasPrivateChat, setSeen } from "../utils/helpers";
+import { hasPrivateChat } from "../utils/helpers";
 import { useContext } from "react";
-import { ChatContext } from "../pages/AppLayout";
+import { mainContext } from "../context/MainContext";
 
 const MessagePreview = ({ chat, setActiveTab, isSearch }) => {
-  const { userId, chats, setChats, setJoinChat, setSelectedPerson } =
-    useContext(ChatContext);
+  const { chats, setJoinChat, setSelectedPerson } = useContext(mainContext);
   const navigate = useNavigate();
 
   const name = isSearch
@@ -17,16 +16,11 @@ const MessagePreview = ({ chat, setActiveTab, isSearch }) => {
   const isExplore = chat.type === "explore";
 
   function handleOnClick() {
-    if (!isExplore) {
-      navigate(`/chat/${chat.id}`);
-      setSeen(chat, setChats, chat.id);
-    } else {
-      setJoinChat(true);
-      setActiveTab("Groups");
-    }
+    setJoinChat(true);
+    setActiveTab("Groups");
   }
   const personAlreadyInChat = hasPrivateChat(chats, chat.id);
-  console.log("person", personAlreadyInChat);
+
   function handlePersonClick() {
     if (isSearch && !personAlreadyInChat) {
       navigate("/chat/new");
