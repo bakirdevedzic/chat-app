@@ -47,7 +47,7 @@ function Chat() {
     ? chat.messages[chat.messages.length - 1].timestamp
     : null;
 
-  const { loading: loadingMessages } = useLoadMoreMessages(
+  const { isLoading: loadingMessages } = useLoadMoreMessages(
     id,
     chat.type,
     lastMessageTimestamp,
@@ -65,7 +65,7 @@ function Chat() {
     handleNewMessage,
     userId
   );
-  console.log(isLoading2);
+
   const { triggerSendMessage, loading } = useSendMessage(id, chat?.type);
 
   if (id === "new_user")

@@ -20,7 +20,7 @@ import {
   endAt,
   addDoc,
 } from "firebase/firestore";
-import { getUsers } from "../utils/helpers";
+import { getUsers, transformMessage } from "../utils/helpers";
 
 export const fetchUserData = async (userId) => {
   const userDocRef = doc(db, "users", userId);
@@ -84,6 +84,9 @@ export const fetchUserChats = async (userId, onNewMessage) => {
           id: doc.id,
           ...doc.data(),
         }));
+        const transformedMessages = messages.map((message) =>
+          transformMessage(message, participantNames)
+        );
 
         const latestMessageTimestamp =
           messages.length > 0 ? messages[0].timestamp : null;
@@ -95,7 +98,7 @@ export const fetchUserChats = async (userId, onNewMessage) => {
           ...chatData,
           newMessage: false,
           participants: participantNames,
-          messages,
+          messages: transformedMessages,
           fetchedMessageAmount: messages.length,
           latestMessageTimestamp,
         };
@@ -125,6 +128,9 @@ export const fetchUserChats = async (userId, onNewMessage) => {
           id: doc.id,
           ...doc.data(),
         }));
+        const transformedMessages = messages.map((message) =>
+          transformMessage(message, participantNames)
+        );
 
         const latestMessageTimestamp =
           messages.length > 0 ? messages[0].timestamp : null;
@@ -135,7 +141,7 @@ export const fetchUserChats = async (userId, onNewMessage) => {
           type: "group",
           newMessage: false,
           ...chatData,
-          messages,
+          messages: transformedMessages,
           fetchedMessageAmount: messages.length,
           participants: participantNames,
           latestMessageTimestamp,
@@ -235,13 +241,16 @@ export const fetchChatMessages = async (chatId, chatType, userId) => {
 
     const participantNames = await getUsers({ chatData, userId });
     const messageCount = await getMessageCount(chatId, "group");
+    const transformedMessages = messages.map((message) =>
+      transformMessage(message, participantNames)
+    );
     return {
       id: chatDocRef.id,
       messageCount: messageCount,
       type: chatType,
       ...chatData,
       participants: participantNames,
-      messages,
+      messages: transformedMessages,
       fetchedMessageAmount: messages.length,
       latestMessageTimestamp,
     };
@@ -358,6 +367,7 @@ export const loadMoreMessages = async (
   chatId,
   chatType,
   lastTimestamp,
+  participantNames,
   pageSize = 20
 ) => {
   try {
@@ -376,10 +386,12 @@ export const loadMoreMessages = async (
       id: doc.id,
       ...doc.data(),
     }));
-
-    return messages;
+    const transformedMessages = messages.map((message) =>
+      transformMessage(message, participantNames)
+    );
+    console.log("transformed", transformedMessages);
+    return transformedMessages;
   } catch (error) {
-    console.error("Error loading more messages:", error);
     throw new Error("Failed to load more messages");
   }
 };

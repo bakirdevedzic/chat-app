@@ -24,7 +24,7 @@ function useSearchPerson() {
               const fetchedPeople = await searchUsers(search);
               setPeople(fetchedPeople);
             } catch (error) {
-              console.log(error);
+              toast.error(error.message);
             } finally {
               setLoading(false);
             }

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
+import toast from "react-hot-toast";
 
 function ProfilePreview() {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ function ProfilePreview() {
       await signOut(auth);
       navigate("/login");
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
     }
   };
 

@@ -56,19 +56,14 @@ export function transformDate(timestamp) {
   }
 }
 
-export function transformMessages(chat) {
-  let transformedMessages;
-
-  transformedMessages = chat.messages.map((message) => {
-    return {
-      id: message.id,
-      sender: returnName(chat.participants, message.sender),
-      text: message.text,
-      timestamp: transformDate(message.timestamp),
-    };
-  });
-
-  return transformedMessages;
+export function transformMessage(message, participants) {
+  return {
+    id: message.id,
+    sender: returnName(participants, message.sender),
+    text: message.text,
+    timestamp: message.timestamp,
+    time: transformDate(message.timestamp),
+  };
 }
 
 export function setSeen(chats, setChats, chatId) {
@@ -112,6 +107,7 @@ export const appendMessagesToChat = (chats, setChats, chatId, messages) => {
 };
 
 export function hasPrivateChat(chats, personId) {
-  
-  return chats.some((chat) => chat.type === "private" && chat.users.includes(personId));
+  return chats.some(
+    (chat) => chat.type === "private" && chat.users.includes(personId)
+  );
 }

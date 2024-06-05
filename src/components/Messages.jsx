@@ -1,5 +1,4 @@
 import Spinner from "../ui/Spinner";
-import { transformMessages } from "../utils/helpers";
 import Message from "./Message";
 
 function Messages({ chat, setLoadChat, loadingMessages }) {
@@ -9,15 +8,13 @@ function Messages({ chat, setLoadChat, loadingMessages }) {
         No messages yet
       </div>
     );
-  const transformedMessages = transformMessages(chat);
-
   function loadMoreMessages() {
     setLoadChat(true);
   }
 
   return (
     <div className="flex flex-col-reverse bg-slate-50 overflow-y-scroll items-start flex-grow">
-      {transformedMessages?.map((message) => (
+      {chat.messages?.map((message) => (
         <Message key={message.id} message={message} />
       ))}
       <div className="flex justify-center w-[100%]">

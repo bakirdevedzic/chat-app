@@ -16,7 +16,7 @@ function Register() {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       const user = auth.currentUser;
-      console.log(user);
+
       if (user) {
         navigate("/chat/new_user");
         await setDoc(doc(db, "users", user.uid), {

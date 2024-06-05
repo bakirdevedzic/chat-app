@@ -6,6 +6,7 @@ import useLeaveChat from "../hooks/useLeaveChat";
 import { useParams } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { auth } from "../firebase";
+import { transformMessage } from "../utils/helpers";
 
 export const mainContext = createContext();
 
@@ -22,8 +23,6 @@ function MainContextProvider() {
   const user = auth.currentUser;
   const userId = user?.uid;
 
-  console.log(user);
-
   const handleNewMessage = (chatId, newMessage) => {
     setChats((prevChats) =>
       prevChats.map((chat) =>
@@ -32,7 +31,10 @@ function MainContextProvider() {
           ? {
               ...chat,
               newMessage: true,
-              messages: [newMessage, ...chat.messages],
+              messages: [
+                transformMessage(newMessage, chat.participants),
+                ...chat.messages,
+              ],
             }
           : chat
       )

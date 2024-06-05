@@ -12,16 +12,21 @@ const useLoadMoreMessages = (
   loadChat,
   chats
 ) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchExploreGroupsApi = async () => {
       try {
         setIsLoading(true);
+        const participantNames = chats.find(
+          (c) => c.id === chatId
+        ).participants;
+
         const messages = await loadMoreMessages(
           chatId,
           chatType,
-          lastTimestamp
+          lastTimestamp,
+          participantNames
         );
 
         appendMessagesToChat(chats, setChats, chatId, messages);
