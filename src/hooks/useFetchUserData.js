@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { fetchUserData } from "../services/firebase";
+import { fetchUserData } from "../services/userFirebaseFunctions";
+// import { fetchUserData } from "../services/firebase";
 
 function useFetchUserData(userId) {
   const [userData, setUserData] = useState(null);

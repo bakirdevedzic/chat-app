@@ -11,23 +11,12 @@ import {
   setDoc,
   onSnapshot,
   where,
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
   getCountFromServer,
   startAfter,
-  startAt,
-  endAt,
   addDoc,
 } from "firebase/firestore";
 import { getUsers, transformMessage } from "../utils/helpers";
-
-export const fetchUserData = async (userId) => {
-  const userDocRef = doc(db, "users", userId);
-  const userSnapshot = await getDoc(userDocRef);
-  const userData = userSnapshot.exists ? userSnapshot.data() : null;
-  return userData;
-};
+import { addUserToChat, fetchUserData } from "./userFirebaseFunctions";
 
 export const fetchExploreGroups = async (userId) => {
   try {
@@ -61,129 +50,20 @@ export const fetchUserChats = async (userId, onNewMessage) => {
     const privateChatIds = userData?.privateChats || [];
     const groupChatIds = userData?.groupChats || [];
 
-    const privateChats = await Promise.all(
-      privateChatIds.map(async (chatId) => {
-        const chatDocRef = doc(collection(db, "privateChats"), chatId);
-        const chatSnapshot = await getDoc(chatDocRef);
-        const chatData = chatSnapshot.exists() ? chatSnapshot.data() : null;
-
-        if (!chatData) {
-          console.warn(`Private chat not found: ${chatId}`);
-          return null;
-        }
-        const participantNames = await getUsers({ chatData, userId });
-
-        const messagesRef = query(
-          collection(chatDocRef, "messages"),
-          orderBy("timestamp", "desc"),
-          limit(50)
-        );
-        const messagesSnapshot = await getDocs(messagesRef);
-
-        const messages = messagesSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        const transformedMessages = messages.map((message) =>
-          transformMessage(message, participantNames)
-        );
-
-        const latestMessageTimestamp =
-          messages.length > 0 ? messages[0].timestamp : null;
-        const messageCount = await getMessageCount(chatId, "private");
-        return {
-          id: chatDocRef.id,
-          messageCount: messageCount,
-          type: "private",
-          ...chatData,
-          newMessage: false,
-          participants: participantNames,
-          messages: transformedMessages,
-          fetchedMessageAmount: messages.length,
-          latestMessageTimestamp,
-        };
-      })
+    const fetchChatPromises = [...privateChatIds, ...groupChatIds].map(
+      (chatId) => {
+        const chatType = privateChatIds.includes(chatId) ? "private" : "group";
+        return fetchChatAndAddListener(chatId, chatType, onNewMessage, userId);
+      }
     );
 
-    const groupChats = await Promise.all(
-      groupChatIds.map(async (chatId) => {
-        const chatDocRef = doc(collection(db, "groupChats"), chatId);
-        const chatSnapshot = await getDoc(chatDocRef);
-        const chatData = chatSnapshot.exists() ? chatSnapshot.data() : null;
-
-        if (!chatData) {
-          console.warn(`Group chat not found: ${chatId}`);
-          return null;
-        }
-
-        const participantNames = await getUsers({ chatData, userId });
-
-        const messagesRef = query(
-          collection(chatDocRef, "messages"),
-          orderBy("timestamp", "desc"),
-          limit(50)
-        );
-        const messagesSnapshot = await getDocs(messagesRef);
-        const messages = messagesSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        const transformedMessages = messages.map((message) =>
-          transformMessage(message, participantNames)
-        );
-
-        const latestMessageTimestamp =
-          messages.length > 0 ? messages[0].timestamp : null;
-        const messageCount = await getMessageCount(chatId, "group");
-        return {
-          id: chatDocRef.id,
-          messageCount: messageCount,
-          type: "group",
-          newMessage: false,
-          ...chatData,
-          messages: transformedMessages,
-          fetchedMessageAmount: messages.length,
-          participants: participantNames,
-          latestMessageTimestamp,
-        };
-      })
-    );
-
-    const chats = [...privateChats, ...groupChats].filter(Boolean);
-
-    addMessageListeners(chats, onNewMessage);
+    const chats = (await Promise.all(fetchChatPromises)).filter(Boolean);
 
     return chats;
   } catch (error) {
     console.error("Error fetching user chats:", error);
     return [];
   }
-};
-
-export const addMessageListeners = (chats, onNewMessage, setChats) => {
-  chats.forEach((chat) => {
-    if (!chat.latestMessageTimestamp) return;
-
-    const messagesRef = query(
-      collection(
-        db,
-        chat.type === "private" ? "privateChats" : "groupChats",
-        chat.id,
-        "messages"
-      ),
-      where("timestamp", ">", chat.latestMessageTimestamp),
-      orderBy("timestamp", "desc")
-    );
-
-    onSnapshot(messagesRef, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === "added") {
-          const newMessage = { id: change.doc.id, ...change.doc.data() };
-          onNewMessage(chat.id, newMessage);
-        }
-      });
-    });
-  });
 };
 
 export const sendMessage = async (chatId, chatType, message, userId) => {
@@ -209,10 +89,8 @@ export const sendMessage = async (chatId, chatType, message, userId) => {
 
 export const fetchChatMessages = async (chatId, chatType, userId) => {
   try {
-    // Determine the collection based on chat type
     const chatCollection = chatType === "group" ? "groupChats" : "privateChats";
 
-    // Fetch the chat document
     const chatDocRef = doc(collection(db, chatCollection), chatId);
     const chatSnapshot = await getDoc(chatDocRef);
     const chatData = chatSnapshot.exists() ? chatSnapshot.data() : null;
@@ -222,7 +100,6 @@ export const fetchChatMessages = async (chatId, chatType, userId) => {
       return null;
     }
 
-    // Fetch the last 50 messages
     const messagesRef = query(
       collection(chatDocRef, "messages"),
       orderBy("timestamp", "desc"),
@@ -253,8 +130,7 @@ export const fetchChatMessages = async (chatId, chatType, userId) => {
       latestMessageTimestamp,
     };
   } catch (error) {
-    console.error("Error fetching chat messages:", error);
-    return null;
+    throw new Error(error);
   }
 };
 
@@ -289,7 +165,6 @@ export const fetchChatAndAddListener = async (
   userId
 ) => {
   try {
-    // Fetch chat messages
     const chat = await fetchChatMessages(chatId, chatType, userId);
 
     if (!chat) {
@@ -297,49 +172,12 @@ export const fetchChatAndAddListener = async (
       return null;
     }
 
-    // Add message listener
     addSingleChatMessageListener(chat, onNewMessage);
 
     return chat;
   } catch (error) {
     console.error("Error fetching chat and adding listener:", error);
     return null;
-  }
-};
-
-export const addUserToGroupChat = async (userId, chatId) => {
-  const userDocRef = doc(db, "users", userId);
-  const chatDocRef = doc(db, "groupChats", chatId);
-
-  try {
-    await updateDoc(chatDocRef, {
-      users: arrayUnion(userId),
-    });
-
-    await updateDoc(userDocRef, {
-      groupChats: arrayUnion(chatId),
-    });
-  } catch (error) {
-    console.error("Error adding user to group chat:", error);
-    throw new Error("Failed to add user to group chat");
-  }
-};
-
-export const removeUserFromGroupChat = async (userId, chatId) => {
-  const userDocRef = doc(db, "users", userId);
-  const chatDocRef = doc(db, "groupChats", chatId);
-
-  try {
-    await updateDoc(chatDocRef, {
-      users: arrayRemove(userId),
-    });
-
-    await updateDoc(userDocRef, {
-      groupChats: arrayRemove(chatId),
-    });
-  } catch (error) {
-    console.error("Error removing user from group chat:", error);
-    throw new Error("Failed to remove user from group chat");
   }
 };
 
@@ -388,26 +226,6 @@ export const loadMoreMessages = async (
   }
 };
 
-export const searchUsers = async (searchText) => {
-  const usersRef = collection(db, "users");
-
-  const q = query(
-    usersRef,
-    orderBy("username"),
-    startAt(searchText),
-    endAt(searchText + "\uf8ff")
-  );
-
-  const querySnapshot = await getDocs(q);
-  const users = [];
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-    users.push({ id: doc.id, username: data.username });
-  });
-
-  return users;
-};
-
 export const createPrivateChat = async (userId1, userId2, initialMessage) => {
   try {
     const chatRef = await addDoc(collection(db, "privateChats"), {
@@ -429,25 +247,5 @@ export const createPrivateChat = async (userId1, userId2, initialMessage) => {
   } catch (error) {
     console.error("Error creating private chat:", error);
     throw new Error("Failed to create private chat");
-  }
-};
-
-export const addUserToChat = async (userId, chatId, chatType) => {
-  const userDocRef = doc(db, "users", userId);
-  const chatCollection = chatType === "group" ? "groupChats" : "privateChats";
-  const chatDocRef = doc(db, chatCollection, chatId);
-
-  try {
-    await updateDoc(chatDocRef, {
-      users: arrayUnion(userId),
-    });
-
-    const userChatArray = chatType === "group" ? "groupChats" : "privateChats";
-    await updateDoc(userDocRef, {
-      [userChatArray]: arrayUnion(chatId),
-    });
-  } catch (error) {
-    console.error(`Error adding user to ${chatType} chat:`, error);
-    throw new Error(`Failed to add user to ${chatType} chat`);
   }
 };

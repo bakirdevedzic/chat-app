@@ -1,4 +1,4 @@
-import { loadMoreMessages } from "../services/firebase";
+import { loadMoreMessages } from "../services/chatsFirebaseFunctions";
 import { useEffect, useState } from "react";
 import { appendMessagesToChat } from "../utils/helpers";
 import toast from "react-hot-toast";

@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import {
   createPrivateChat,
   fetchChatAndAddListener,
-} from "../services/firebase";
+} from "../services/chatsFirebaseFunctions";
 import { useNavigate } from "react-router-dom";
 import { mainContext } from "../context/MainContext";
 import toast from "react-hot-toast";

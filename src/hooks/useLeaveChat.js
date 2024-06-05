@@ -1,7 +1,7 @@
-import { removeUserFromGroupChat } from "../services/firebase";
 import { useEffect, useState } from "react";
 import { removeChatById } from "../utils/helpers";
 import toast from "react-hot-toast";
+import { removeUserFromGroupChat } from "../services/userFirebaseFunctions";
 
 const useLeaveChat = (
   chatId,

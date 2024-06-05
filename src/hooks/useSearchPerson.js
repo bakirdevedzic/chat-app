@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useRef } from "react";
 import { useState } from "react";
-import { searchUsers } from "../services/firebase";
+// import { searchUsers } from "../services/firebase";
 import toast from "react-hot-toast";
+import { searchUsers } from "../services/userFirebaseFunctions";
 
 function useSearchPerson() {
   const [search, setSearch] = useState("");

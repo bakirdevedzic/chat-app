@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { sendMessage } from "../services/firebase";
+import { sendMessage } from "../services/chatsFirebaseFunctions";
 
 import { mainContext } from "../context/MainContext";
 import toast from "react-hot-toast";

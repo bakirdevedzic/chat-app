@@ -1,5 +1,8 @@
 import toast from "react-hot-toast";
-import { fetchExploreGroups, fetchUserChats } from "../services/firebase";
+import {
+  fetchExploreGroups,
+  fetchUserChats,
+} from "../services/chatsFirebaseFunctions";
 import { useEffect, useState } from "react";
 
 const useFetchChats = (userId, handleNewMessage, setChats) => {

@@ -1,10 +1,8 @@
-import {
-  addUserToGroupChat,
-  fetchChatAndAddListener,
-} from "../services/firebase";
+import { fetchChatAndAddListener } from "../services/chatsFirebaseFunctions";
 import { useEffect, useState } from "react";
 import { removeChatById } from "../utils/helpers";
 import toast from "react-hot-toast";
+import { addUserToGroupChat } from "../services/userFirebaseFunctions";
 
 const useJoinChat = (
   chatId,
