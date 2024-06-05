@@ -1,4 +1,4 @@
-import Spinner from "../ui/Spinner";
+import Spinner from "../../ui/Spinner";
 import Message from "./Message";
 
 function Messages({ chat, setLoadChat, loadingMessages }) {

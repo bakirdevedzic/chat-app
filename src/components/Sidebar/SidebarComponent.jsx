@@ -1,7 +1,7 @@
-import { mainContext } from "../context/MainContext";
-import ModalOverlaySideBar from "../ui/ModalOverlaySidebar";
-import Search from "../ui/Search";
-import Spinner from "../ui/Spinner";
+import { mainContext } from "../../context/MainContext";
+import ModalOverlaySideBar from "../../ui/ModalOverlaySidebar";
+import Search from "../../ui/Search";
+import Spinner from "../../ui/Spinner";
 import MessagePreview from "./MessagePreview";
 import ProfilePreview from "./ProfilePreview";
 import TypesOfChats from "./TypesOfChats";

@@ -1,8 +1,9 @@
 import { useContext } from "react";
-import Chat from "../components/Chat";
-import SidebarComponent from "../components/SidebarComponent";
+
+import SidebarComponent from "../components/Sidebar/SidebarComponent";
 import { mainContext } from "../context/MainContext";
 import Spinner from "../ui/Spinner";
+import Chat from "../components/Chat/Chat";
 
 function AppLayout() {
   const { sidebarVisible, chatsLoading } = useContext(mainContext);

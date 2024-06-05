@@ -1,16 +1,14 @@
-import { useParams } from "react-router-dom";
-
 import ChatName from "./ChatName";
 import Messages from "./Messages";
 import NewMessageBox from "./NewMessageBox";
-import useSendMessage from "../hooks/useSendMessage";
+import useSendMessage from "../../hooks/useSendMessage";
 import { useContext, useState } from "react";
-import { isUserInGroup } from "../utils/helpers";
-import useLoadMoreMessages from "../hooks/useLoadMoreMessages";
-import useJoinChat from "../hooks/useJoinChat";
-import Spinner from "../ui/Spinner";
-import { mainContext } from "../context/MainContext";
-import MessageToUser from "../ui/MessageToUser";
+import { isUserInGroup } from "../../utils/helpers";
+import useLoadMoreMessages from "../../hooks/useLoadMoreMessages";
+import useJoinChat from "../../hooks/useJoinChat";
+import Spinner from "../../ui/Spinner";
+import { mainContext } from "../../context/MainContext";
+import MessageToUser from "../../ui/MessageToUser";
 
 function Chat() {
   const {

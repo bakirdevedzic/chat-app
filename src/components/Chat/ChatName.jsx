@@ -1,8 +1,8 @@
 import { useContext } from "react";
 
 import { PiChatsCircleBold } from "react-icons/pi";
-import { mainContext } from "../context/MainContext";
-import Spinner from "../ui/Spinner";
+import { mainContext } from "../../context/MainContext";
+import Spinner from "../../ui/Spinner";
 
 function ChatName({ chat, leaveChatLoading }) {
   const { setShowSidebar, setLeaveChat } = useContext(mainContext);

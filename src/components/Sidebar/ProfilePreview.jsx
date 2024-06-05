@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth } from "../../firebase";
 import toast from "react-hot-toast";
 import { useContext } from "react";
-import { mainContext } from "../context/MainContext";
+import { mainContext } from "../../context/MainContext";
 
 function ProfilePreview() {
   const { userData } = useContext(mainContext);

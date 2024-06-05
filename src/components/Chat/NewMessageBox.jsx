@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { IoIosSend } from "react-icons/io";
-import useCreatePrivateChat from "../hooks/useCreatePrivateChat";
-import { mainContext } from "../context/MainContext";
-import Spinner from "../ui/Spinner";
+import useCreatePrivateChat from "../../hooks/useCreatePrivateChat";
+import { mainContext } from "../../context/MainContext";
+import Spinner from "../../ui/Spinner";
 
 function NewMessageBox({ triggerSendMessage, loading }) {
   const { selectedPerson, userId, setChats, handleNewMessage } =

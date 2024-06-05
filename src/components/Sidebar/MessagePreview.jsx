@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { hasPrivateChat } from "../utils/helpers";
+import { hasPrivateChat } from "../../utils/helpers";
 import { useContext } from "react";
-import { mainContext } from "../context/MainContext";
+import { mainContext } from "../../context/MainContext";
 
 const MessagePreview = ({ chat, setActiveTab, isSearch }) => {
   const { chats, setJoinChat, setSelectedPerson } = useContext(mainContext);
