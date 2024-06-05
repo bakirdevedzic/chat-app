@@ -29,7 +29,7 @@ function returnName(participants, userId) {
   if (mineId === userId) {
     return "You";
   }
-  return "Unknown";
+  return "Chat user";
 }
 
 export function transformDate(timestamp) {
@@ -78,22 +78,21 @@ export function setSeen(chats, setChats, chatId) {
   );
 }
 
-export const isUserInGroup = (chatId, chats) => {
+export function isUserInGroup(chatId, chats) {
   const matchingChat = chats.find((chat) => {
     return (
       chat.id === chatId && (chat.type === "private" || chat.type === "group")
     );
   });
 
-  return !!matchingChat; // Concise boolean check using double negation
-};
+  return !!matchingChat;
+}
 
-export const removeChatById = (setChats, id) => {
-  // Update chats directly using the callback function with setChats
+export function removeChatById(setChats, id) {
   setChats((currentChats) => currentChats.filter((chat) => chat.id !== id));
-};
+}
 
-export const appendMessagesToChat = (chats, setChats, chatId, messages) => {
+export function appendMessagesToChat(chats, setChats, chatId, messages) {
   const matchingChatIndex = chats.findIndex((chat) => chat.id === chatId);
 
   if (matchingChatIndex !== -1) {
@@ -108,7 +107,7 @@ export const appendMessagesToChat = (chats, setChats, chatId, messages) => {
   } else {
     console.warn("Chat not found with ID:", chatId);
   }
-};
+}
 
 export function hasPrivateChat(chats, personId) {
   return chats.some(
