@@ -4,6 +4,7 @@ import {
 } from "../services/firebase";
 import { useEffect, useState } from "react";
 import { removeChatById } from "../utils/helpers";
+import toast from "react-hot-toast";
 
 const useJoinChat = (
   chatId,
@@ -33,8 +34,9 @@ const useJoinChat = (
           setChats((chats) => [...chats, fetchedChat]);
           setJoinChat(false);
           setIsLoading(false);
+          toast.success("Chat joined successfully");
         } catch (error) {
-          console.error("Error fetching user chats:", error);
+          toast.error(error.message);
           setError(error);
         }
       };

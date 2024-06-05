@@ -1,9 +1,9 @@
+import toast from "react-hot-toast";
 import { fetchExploreGroups, fetchUserChats } from "../services/firebase";
 import { useEffect, useState } from "react";
 
 const useFetchChats = (userId, handleNewMessage, setChats) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -14,8 +14,7 @@ const useFetchChats = (userId, handleNewMessage, setChats) => {
         setChats(() => [...fetchedChats, ...fetchedExploreGroups]);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error fetching user chats:", error);
-        setError(error);
+        toast.error(error.message);
       }
       setIsLoading(false);
     };
@@ -25,7 +24,7 @@ const useFetchChats = (userId, handleNewMessage, setChats) => {
     }
   }, [userId]);
 
-  return { isLoading, error };
+  return { isLoading };
 };
 
 export default useFetchChats;

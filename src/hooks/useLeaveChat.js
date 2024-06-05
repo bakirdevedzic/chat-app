@@ -1,6 +1,7 @@
 import { removeUserFromGroupChat } from "../services/firebase";
 import { useEffect, useState } from "react";
 import { removeChatById } from "../utils/helpers";
+import toast from "react-hot-toast";
 
 const useLeaveChat = (
   chatId,
@@ -11,7 +12,6 @@ const useLeaveChat = (
   userId
 ) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const chat = chats.find((chat) => chat.id === chatId);
 
@@ -30,9 +30,9 @@ const useLeaveChat = (
           setChats((chats) => [...chats, addToExploreChat]);
           setLeaveChat(false);
           setIsLoading(false);
+          toast.success("Chat left successfully");
         } catch (error) {
-          console.error("Error fetching user chats:", error);
-          setError(error);
+          toast.error(error.message);
           setIsLoading(false);
         }
         setIsLoading(false);
@@ -44,7 +44,7 @@ const useLeaveChat = (
     }
   }, [chatId, leaveChat, setChats, setLeaveChat, chat]);
 
-  return { isLoading, error };
+  return { isLoading };
 };
 
 export default useLeaveChat;

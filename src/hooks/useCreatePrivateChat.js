@@ -5,6 +5,7 @@ import {
 } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
 import { mainContext } from "../context/MainContext";
+import toast from "react-hot-toast";
 
 function useCreatePrivateChat(
   userId,
@@ -36,6 +37,7 @@ function useCreatePrivateChat(
         setSelectedPerson(null);
         setLoading(false);
       } catch (error) {
+        toast.error(error.message);
         setLoading(false);
       }
       setLoading(false);

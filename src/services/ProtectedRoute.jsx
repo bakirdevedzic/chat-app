@@ -26,7 +26,7 @@ const ProtectedRoute = ({ children }) => {
   if (isLoading) {
     return (
       <div className="h-screen">
-        <Spinner />;
+        <Spinner />
       </div>
     );
   }

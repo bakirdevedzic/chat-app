@@ -1,6 +1,7 @@
 import { loadMoreMessages } from "../services/firebase";
 import { useEffect, useState } from "react";
 import { appendMessagesToChat } from "../utils/helpers";
+import toast from "react-hot-toast";
 
 const useLoadMoreMessages = (
   chatId,
@@ -12,7 +13,6 @@ const useLoadMoreMessages = (
   chats
 ) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchExploreGroupsApi = async () => {
@@ -28,8 +28,7 @@ const useLoadMoreMessages = (
         setLoadChat(false);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error fetching explore groups:", error);
-        setError(error);
+        toast.error(error.message);
         setLoadChat(false);
       }
       setIsLoading(false);
@@ -40,7 +39,7 @@ const useLoadMoreMessages = (
     }
   }, [setLoadChat, loadChat]);
 
-  return { isLoading, error };
+  return { isLoading };
 };
 
 export default useLoadMoreMessages;

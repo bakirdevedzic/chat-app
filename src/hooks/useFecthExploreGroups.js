@@ -1,9 +1,9 @@
+import toast from "react-hot-toast";
 import { fetchExploreGroups, fetchUserChats } from "../services/firebase";
 import { useEffect, useState } from "react";
 
 const useFetchExploreGroups = (userId, setChats) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchExploreGroupsApi = async () => {
@@ -14,8 +14,7 @@ const useFetchExploreGroups = (userId, setChats) => {
         setChats((chats) => [...chats, ...fetchedExploreGroups]);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error fetching explore groups:", error);
-        setError(error);
+        toast.error(error.message);
       }
       setIsLoading(false);
     };
@@ -25,7 +24,7 @@ const useFetchExploreGroups = (userId, setChats) => {
     }
   }, [userId, setChats]);
 
-  return { isLoading, error };
+  return { isLoading };
 };
 
 export default useFetchExploreGroups;

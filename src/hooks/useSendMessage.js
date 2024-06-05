@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { sendMessage } from "../services/firebase";
 
 import { mainContext } from "../context/MainContext";
+import toast from "react-hot-toast";
 
 function useSendMessage(chatId, chatType) {
   const [isSending, setIsSending] = useState(false);
@@ -18,6 +19,7 @@ function useSendMessage(chatId, chatType) {
       setLoading(false);
     } catch (error) {
       setError(error);
+      toast.error(error.message);
       setLoading(false);
     } finally {
       setLoading(false);

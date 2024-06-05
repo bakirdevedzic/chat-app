@@ -1,10 +1,11 @@
 import { fetchChatAndAddListener, fetchChatMessages } from "../services/firebase";
 import { useEffect, useState } from "react";
 import { removeChatById } from "../utils/helpers";
+import toast from "react-hot-toast";
 
 const useFetchChat = (chatId, setChats,onNewMessage userId) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+ 
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -16,7 +17,7 @@ const useFetchChat = (chatId, setChats,onNewMessage userId) => {
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching user chats:", error);
-        setError(error);
+        toast.error(error.message);
       }
       setIsLoading(false);
     };
@@ -26,7 +27,7 @@ const useFetchChat = (chatId, setChats,onNewMessage userId) => {
     }
   }, [chatId]);
 
-  return { isLoading, error };
+  return { isLoading };
 };
 
 export default useFetchChat;
