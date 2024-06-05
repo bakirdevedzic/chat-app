@@ -10,17 +10,19 @@ import { auth } from "../firebase";
 export const mainContext = createContext();
 
 function MainContextProvider() {
-  const [showSidebar, setShowSidebar] = useState(false);
-  const sidebarHidden = useMediaQuery({ maxWidth: 850 });
-  const sidebarVisible = useMediaQuery({ minWidth: 851 });
   const { id } = useParams();
-
-  const user = auth.currentUser;
-  const userId = user?.uid ? user?.uid : "";
-
+  const [showSidebar, setShowSidebar] = useState(false);
   const [chats, setChats] = useState([]);
   const [joinChat, setJoinChat] = useState(false);
   const [leaveChat, setLeaveChat] = useState(false);
+
+  const sidebarHidden = useMediaQuery({ maxWidth: 850 });
+  const sidebarVisible = useMediaQuery({ minWidth: 851 });
+
+  const user = auth.currentUser;
+  const userId = user?.uid;
+
+  console.log(user);
 
   const handleNewMessage = (chatId, newMessage) => {
     setChats((prevChats) =>
@@ -37,7 +39,7 @@ function MainContextProvider() {
     );
   };
 
-  const { isLoading: isLoading3 } = useLeaveChat(
+  const { isLoading: leaveChatLoading } = useLeaveChat(
     id,
     setChats,
     leaveChat,
@@ -46,18 +48,21 @@ function MainContextProvider() {
     userId
   );
 
-  const { isLoading } = useFetchChats(userId, handleNewMessage, setChats);
+  const { isLoading: chatsLoading } = useFetchChats(
+    userId,
+    handleNewMessage,
+    setChats
+  );
 
   const {
     search,
     setSearch,
-    loading: loading4,
+    loading: searchLoad,
     people,
     selectedPerson,
     setSelectedPerson,
     setPeople,
   } = useSearchPerson();
-  console.log(sidebarVisible);
 
   return (
     <mainContext.Provider
@@ -79,6 +84,10 @@ function MainContextProvider() {
         handleNewMessage,
         setJoinChat,
         joinChat,
+        id,
+        leaveChatLoading,
+        searchLoad,
+        chatsLoading,
       }}
     >
       <AppLayout />

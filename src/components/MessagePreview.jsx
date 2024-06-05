@@ -13,19 +13,16 @@ const MessagePreview = ({ chat, setActiveTab, isSearch }) => {
     ? chat.participants[0].username
     : chat.name;
 
-  const isExplore = chat.type === "explore";
-
   function handleOnClick() {
     setJoinChat(true);
     setActiveTab("Groups");
   }
-  const personAlreadyInChat = hasPrivateChat(chats, chat.id);
 
   function handlePersonClick() {
-    if (isSearch && !personAlreadyInChat) {
+    if (isSearch && !hasPrivateChat(chats, chat.id)) {
       navigate("/chat/new");
       setSelectedPerson(chat);
-    } else if (isSearch && personAlreadyInChat) {
+    } else if (isSearch && hasPrivateChat(chats, chat.id)) {
       const chatId = chats.find((c) => c.users.includes(chat.id)).id;
       navigate(`/chat/${chatId}`);
     } else {
@@ -39,8 +36,8 @@ const MessagePreview = ({ chat, setActiveTab, isSearch }) => {
       onClick={handlePersonClick}
     >
       <div className="font-bold text-gray-900">{name}</div>
-      {isExplore ? (
-        <button onClick={handleOnClick}>Click to join!</button>
+      {chat.type === "explore" ? (
+        <button onClick={handleOnClick}>Click to join</button>
       ) : null}
     </div>
   );

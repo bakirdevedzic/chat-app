@@ -8,7 +8,7 @@ function Search() {
       <div>
         <input
           type="text"
-          placeholder="Search chats..."
+          placeholder="Search people..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="ml-2 outline-none bg-transparent text-gray-700"

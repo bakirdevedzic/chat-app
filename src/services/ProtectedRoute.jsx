@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
+import Spinner from "../ui/Spinner";
 
 const ProtectedRoute = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +24,11 @@ const ProtectedRoute = ({ children }) => {
   }, [navigate]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="h-screen">
+        <Spinner />;
+      </div>
+    );
   }
 
   return isAuthenticated ? children : null;

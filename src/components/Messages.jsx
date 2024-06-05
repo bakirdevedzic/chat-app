@@ -1,8 +1,8 @@
-import { useContext } from "react";
+import Spinner from "../ui/Spinner";
 import { transformMessages } from "../utils/helpers";
 import Message from "./Message";
 
-function Messages({ chat, setLoadChat }) {
+function Messages({ chat, setLoadChat, loadingMessages }) {
   if (!chat.messages || chat.messages.length === 0)
     return (
       <div className="h-full flex justify-center items-center align-middle">
@@ -21,13 +21,17 @@ function Messages({ chat, setLoadChat }) {
         <Message key={message.id} message={message} />
       ))}
       <div className="flex justify-center w-[100%]">
-        {chat.messageCount > chat.fetchedMessageAmount && (
-          <button
-            className="self-start p-2 text-center shadow-lg mb-6 mt-6 bg-white rounded-xl hover:bg-primary-indigo hover:text-white"
-            onClick={loadMoreMessages}
-          >
-            Load more
-          </button>
+        {loadingMessages ? (
+          <Spinner />
+        ) : (
+          chat.messageCount > chat.fetchedMessageAmount && (
+            <button
+              className="self-start p-2 text-center shadow-lg mb-6 mt-6 bg-white rounded-xl hover:bg-primary-indigo hover:text-white"
+              onClick={loadMoreMessages}
+            >
+              Load more
+            </button>
+          )
         )}
       </div>
     </div>

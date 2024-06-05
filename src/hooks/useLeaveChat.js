@@ -10,7 +10,7 @@ const useLeaveChat = (
   chats,
   userId
 ) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const chat = chats.find((chat) => chat.id === chatId);
@@ -33,7 +33,9 @@ const useLeaveChat = (
         } catch (error) {
           console.error("Error fetching user chats:", error);
           setError(error);
+          setIsLoading(false);
         }
+        setIsLoading(false);
       };
 
       if (chatId) {

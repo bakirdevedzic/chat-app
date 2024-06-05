@@ -10,6 +10,7 @@ import useLoadMoreMessages from "../hooks/useLoadMoreMessages";
 import useJoinChat from "../hooks/useJoinChat";
 import Spinner from "../ui/Spinner";
 import { mainContext } from "../context/MainContext";
+import MessageToUser from "../ui/MessageToUser";
 
 function Chat() {
   const {
@@ -20,11 +21,11 @@ function Chat() {
     userId,
     joinChat,
     setJoinChat,
+    id,
+    leaveChatLoading,
   } = useContext(mainContext);
 
   const [loadChat, setLoadChat] = useState(false);
-  console.log(chats);
-  const { id } = useParams();
 
   let isUserInChat = isUserInGroup(id, chats);
   let chat;
@@ -46,7 +47,7 @@ function Chat() {
     ? chat.messages[chat.messages.length - 1].timestamp
     : null;
 
-  const { loading } = useLoadMoreMessages(
+  const { loading: loadingMessages } = useLoadMoreMessages(
     id,
     chat.type,
     lastMessageTimestamp,
@@ -61,33 +62,36 @@ function Chat() {
     setChats,
     joinChat,
     setJoinChat,
-    chats,
     handleNewMessage,
     userId
   );
+  console.log(isLoading2);
+  const { triggerSendMessage, loading } = useSendMessage(id, chat?.type);
 
-  const { triggerSendMessage } = useSendMessage(id, chat?.type);
+  if (id === "new_user")
+    return <MessageToUser message="You have successfully registered!" />;
 
-  if (id === "new_user") {
-    return <div>You have successfully registered!</div>;
-  }
-  if (id === "logged_in") return <div>Welcome back!</div>;
-
-  if (!isUserInChat)
-    return (
-      <div className="h-full flex justify-center items-center align-middle text-2xl font-bold text-gray-600 text-center">
-        You have no access to this chat!
-      </div>
-    );
+  if (id === "logged_in") return <MessageToUser message="Welcome back!" />;
 
   if (isLoading2) return <Spinner />;
+
+  if (!isUserInChat)
+    return <MessageToUser message="You have no access to this chat!" />;
+
   return (
     <div className="grid grid-rows-[auto_1fr_90px] w-[100%] h-full sm:h-[100vh] us:h-[100vh]">
-      <ChatName chat={chat} />
+      <ChatName chat={chat} leaveChatLoading={leaveChatLoading} />
 
-      <Messages chat={chat} setLoadChat={setLoadChat} />
+      <Messages
+        chat={chat}
+        setLoadChat={setLoadChat}
+        loadingMessages={loadingMessages}
+      />
 
-      <NewMessageBox triggerSendMessage={triggerSendMessage} />
+      <NewMessageBox
+        triggerSendMessage={triggerSendMessage}
+        loading={loading}
+      />
     </div>
   );
 }

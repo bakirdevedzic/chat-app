@@ -20,18 +20,25 @@ function useCreatePrivateChat(
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     async function createChat() {
-      const chatId = await createPrivateChat(userId, personId, message);
-      const fetchChat = await fetchChatAndAddListener(
-        chatId,
-        "private",
-        onNewMessage,
-        userId
-      );
-      setCreateNewChat(false);
-      setChats((prevChats) => [...prevChats, fetchChat]);
-      navigate(`/chat/${chatId}`);
-      setPeople([]);
-      setSelectedPerson(null);
+      try {
+        setLoading(true);
+        const chatId = await createPrivateChat(userId, personId, message);
+        const fetchChat = await fetchChatAndAddListener(
+          chatId,
+          "private",
+          onNewMessage,
+          userId
+        );
+        setCreateNewChat(false);
+        setChats((prevChats) => [...prevChats, fetchChat]);
+        navigate(`/chat/${chatId}`);
+        setPeople([]);
+        setSelectedPerson(null);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+      }
+      setLoading(false);
     }
     if (createNewChat) createChat();
   }, [

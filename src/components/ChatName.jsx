@@ -2,8 +2,9 @@ import { useContext } from "react";
 
 import { PiChatsCircleBold } from "react-icons/pi";
 import { mainContext } from "../context/MainContext";
+import Spinner from "../ui/Spinner";
 
-function ChatName({ chat }) {
+function ChatName({ chat, leaveChatLoading }) {
   const { setShowSidebar, setLeaveChat } = useContext(mainContext);
   const name =
     chat?.type === "private" ? chat.participants[0].username : chat?.name;
@@ -20,8 +21,12 @@ function ChatName({ chat }) {
       </div>
       <div className="flex flex-row justify-between w-[100%] pr-10">
         <p className="text-xl font-bold ">{name}</p>
-        {chat?.type === "group" && (
-          <button onClick={handleLeaveChat}>Leave chat!</button>
+        {leaveChatLoading ? (
+          <Spinner />
+        ) : (
+          chat?.type === "group" && (
+            <button onClick={handleLeaveChat}>Leave chat</button>
+          )
         )}
       </div>
     </div>

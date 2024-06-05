@@ -2,13 +2,13 @@ import { useState, useEffect, useContext } from "react";
 import { IoIosSend } from "react-icons/io";
 import useCreatePrivateChat from "../hooks/useCreatePrivateChat";
 import { mainContext } from "../context/MainContext";
+import Spinner from "../ui/Spinner";
 
-function NewMessageBox({ triggerSendMessage }) {
+function NewMessageBox({ triggerSendMessage, loading }) {
   const { selectedPerson, userId, setChats, handleNewMessage } =
     useContext(mainContext);
   const [message, setMessage] = useState("");
   const [isSendingDisabled, setIsSendingDisabled] = useState(false);
-
   const [createNewChat, setCreateNewChat] = useState(false);
   const [messageNewChat, setMessageNewChat] = useState("");
 
@@ -72,7 +72,7 @@ function NewMessageBox({ triggerSendMessage }) {
           onClick={handleSendMessage}
           style={{ pointerEvents: isSendingDisabled ? "none" : "auto" }}
         >
-          <IoIosSend />
+          {loading ? <Spinner /> : <IoIosSend />}
         </div>
       </div>
     </div>

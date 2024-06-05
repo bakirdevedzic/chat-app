@@ -1,7 +1,6 @@
 import {
   addUserToGroupChat,
   fetchChatAndAddListener,
-  fetchChatMessages,
 } from "../services/firebase";
 import { useEffect, useState } from "react";
 import { removeChatById } from "../utils/helpers";
@@ -11,7 +10,6 @@ const useJoinChat = (
   setChats,
   joinChat,
   setJoinChat,
-  chats,
   onNewMessage,
   userId
 ) => {

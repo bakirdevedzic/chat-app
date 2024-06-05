@@ -1,14 +1,21 @@
 import { mainContext } from "../context/MainContext";
 import ModalOverlaySideBar from "../ui/ModalOverlaySidebar";
 import Search from "../ui/Search";
+import Spinner from "../ui/Spinner";
 import MessagePreview from "./MessagePreview";
 import ProfilePreview from "./ProfilePreview";
 import TypesOfChats from "./TypesOfChats";
 import { useContext, useEffect, useState } from "react";
 
 function SidebarComponent() {
-  const { chats, showSidebar, sidebarVisible, sidebarHidden, people } =
-    useContext(mainContext);
+  const {
+    chats,
+    showSidebar,
+    sidebarVisible,
+    sidebarHidden,
+    people,
+    searchLoad,
+  } = useContext(mainContext);
 
   let classNameBase =
     "h-full bg-white row-span-full col-[1/2]  flex flex-col border-solid border-0 border-r border-slate-200  fixed top-0 left-0 z-10 w-[300px] overflow-y-auto transition-[margin-left] ease-in-out duration-500 divide-y";
@@ -38,7 +45,9 @@ function SidebarComponent() {
         <div className="flex items-center justify-center">
           <Search />
         </div>
-        {people.length > 0 ? (
+        {searchLoad ? (
+          <Spinner />
+        ) : people.length > 0 ? (
           people.map((person) => (
             <MessagePreview
               key={person.id}
