@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { auth } from "../firebase";
 import { transformMessage } from "../utils/helpers";
+import useFetchUserData from "../hooks/useFetchUserData";
 
 export const mainContext = createContext();
 
@@ -22,6 +23,8 @@ function MainContextProvider() {
 
   const user = auth.currentUser;
   const userId = user?.uid;
+
+  const { userData } = useFetchUserData(userId);
 
   const handleNewMessage = (chatId, newMessage) => {
     setChats((prevChats) =>
@@ -90,6 +93,7 @@ function MainContextProvider() {
         leaveChatLoading,
         searchLoad,
         chatsLoading,
+        userData,
       }}
     >
       <AppLayout />

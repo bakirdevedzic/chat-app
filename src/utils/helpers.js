@@ -1,5 +1,5 @@
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { auth, db } from "../firebase";
 
 export async function getUsers({ chatData, userId }) {
   const participantUserIds = chatData.users.filter(
@@ -20,12 +20,16 @@ export async function getUsers({ chatData, userId }) {
 }
 
 function returnName(participants, userId) {
+  const mineId = auth.currentUser.uid;
   for (const participant of participants) {
     if (participant.userId === userId) {
       return participant.username;
     }
   }
-  return "You";
+  if (mineId === userId) {
+    return "You";
+  }
+  return "Unknown";
 }
 
 export function transformDate(timestamp) {

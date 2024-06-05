@@ -202,8 +202,6 @@ export const sendMessage = async (chatId, chatType, message, userId) => {
     };
 
     await setDoc(newMessageRef, newMessage);
-
-    console.log("Message sent successfully");
   } catch (error) {
     console.error("Error sending message:", error);
   }
@@ -321,8 +319,6 @@ export const addUserToGroupChat = async (userId, chatId) => {
     await updateDoc(userDocRef, {
       groupChats: arrayUnion(chatId),
     });
-
-    console.log("User added to group chat successfully");
   } catch (error) {
     console.error("Error adding user to group chat:", error);
     throw new Error("Failed to add user to group chat");
@@ -330,7 +326,6 @@ export const addUserToGroupChat = async (userId, chatId) => {
 };
 
 export const removeUserFromGroupChat = async (userId, chatId) => {
-  console.log(userId, chatId);
   const userDocRef = doc(db, "users", userId);
   const chatDocRef = doc(db, "groupChats", chatId);
 
@@ -342,8 +337,6 @@ export const removeUserFromGroupChat = async (userId, chatId) => {
     await updateDoc(userDocRef, {
       groupChats: arrayRemove(chatId),
     });
-
-    console.log("User removed from group chat successfully");
   } catch (error) {
     console.error("Error removing user from group chat:", error);
     throw new Error("Failed to remove user from group chat");
@@ -389,7 +382,6 @@ export const loadMoreMessages = async (
     const transformedMessages = messages.map((message) =>
       transformMessage(message, participantNames)
     );
-    console.log("transformed", transformedMessages);
     return transformedMessages;
   } catch (error) {
     throw new Error("Failed to load more messages");
@@ -433,7 +425,6 @@ export const createPrivateChat = async (userId1, userId2, initialMessage) => {
     await addUserToChat(userId1, chatRef.id, "private");
     await addUserToChat(userId2, chatRef.id, "private");
 
-    console.log("Private chat created successfully with ID:", chatRef.id);
     return chatRef.id;
   } catch (error) {
     console.error("Error creating private chat:", error);
@@ -455,8 +446,6 @@ export const addUserToChat = async (userId, chatId, chatType) => {
     await updateDoc(userDocRef, {
       [userChatArray]: arrayUnion(chatId),
     });
-
-    console.log(`User added to ${chatType} chat successfully`);
   } catch (error) {
     console.error(`Error adding user to ${chatType} chat:`, error);
     throw new Error(`Failed to add user to ${chatType} chat`);
