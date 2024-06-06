@@ -11,7 +11,6 @@ function Messages({ chat, setLoadChat, loadingMessages }) {
   function loadMoreMessages() {
     setLoadChat(true);
   }
-
   return (
     <div className="flex flex-col-reverse bg-slate-50 overflow-y-scroll items-start flex-grow">
       {chat.messages?.map((message) => (

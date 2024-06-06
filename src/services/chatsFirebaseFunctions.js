@@ -236,7 +236,7 @@ export const createPrivateChat = async (userId1, userId2, initialMessage) => {
 
     const messageRef = await addDoc(collection(chatRef, "messages"), {
       text: initialMessage,
-      senderId: userId1,
+      sender: userId1,
       timestamp: serverTimestamp(),
     });
 
